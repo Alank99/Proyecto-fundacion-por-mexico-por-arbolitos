@@ -1,9 +1,10 @@
-import { AuthProvider } from "react-admin";
+import { AuthProvider, ExporterContext } from "react-admin";
 
 export const authProvider: AuthProvider = {
     // called when the user attempts to log in
     login: ({ username }) => {
         localStorage.setItem("username", username);
+
         // accept all username/password combinations
         return Promise.resolve();
     },

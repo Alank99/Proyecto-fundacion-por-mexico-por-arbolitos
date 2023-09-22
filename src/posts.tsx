@@ -50,7 +50,7 @@ export const PostCreate = () => {
 
     const notify = useNotify();
     const refresh = useRefresh();
-    const redirect = useRedirect();
+    const redirect = useRedirect();  
     const unique = useUnique();
 
     const onSuccess = () => {

@@ -5,19 +5,23 @@ import { MenuItem } from '@mui/material';
 import ExitIcon from '@mui/icons-material/Close';
 import { Button } from '@mui/material';
 
-const mydarktheme = {
+export const mydarktheme = {
     palette: defaultDarkTheme.palette
 }
 
-const mylighttheme = {
+export const mylighttheme = {
     palette: defaultLightTheme.palette
 }
 
-const ThemeToggler = () => {
+export const ThemeToggler = () => {
     const [theme, setTheme] = useTheme();
 
+    const onClick = () => {
+        setTheme(theme === mydarktheme ? mylighttheme : mydarktheme);
+    }
+        
     return (
-        <Button onClick={() => setTheme(theme === mydarktheme ? mylighttheme : mydarktheme)}>
+        <Button onClick={onClick}>
             {theme === mydarktheme ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
         </Button>
     );
@@ -51,8 +55,6 @@ const MyAppBar = () => (
     </AppBar>
 );
 
-const MyLayout = (props) => (
+export const MyLayout = (props) => (
     <Layout {...props} appBar={MyAppBar} />
 );
-
-export default MyLayout;

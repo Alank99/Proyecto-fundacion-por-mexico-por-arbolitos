@@ -12,7 +12,7 @@ import UserIcon from "@mui/icons-material/Group";
 import AlbumIcon from "@mui/icons-material/Album";
 
 import MyLoginPage from "./CustomLogin";
-import MyLayout from "./CustomLayout";
+import {MyLayout} from "./CustomLayout";
 
 export const App = () => (
   <Admin authProvider={authProvider} dataProvider={dataProvider} dashboard={Dashboard} i18nProvider={i18nProvider} loginPage={MyLoginPage} layout={MyLayout} >
