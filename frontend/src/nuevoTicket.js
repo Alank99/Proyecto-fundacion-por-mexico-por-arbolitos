@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 
 const NuevoTicket = () => {
     const [datos, setDatos] = useState({
+        prioridad: "",
         coordinador: "",
         categoria: "",
         subcategoria: "",
         status: "",
         descripcion: "",
-        comentario: "",
+        aula: ""
       });
   
       const handleChange = (e) => {
@@ -35,7 +36,7 @@ const NuevoTicket = () => {
               throw new Error('No se pudieron subir los datos');
           }
       };
-      const {prioridad,coordinador, categoria, subcategoria, status, descripcion}= datos;
+      const {prioridad,coordinador, categoria, subcategoria, status, descripcion,aula}= datos;
       return(
           <div>
               <h2>Nuevo ticket</h2>
@@ -100,6 +101,16 @@ const NuevoTicket = () => {
                           onChange={handleChange}
                       />
                   </div>
+                    <div>
+                        <label htmlFor="aula">Aula:</label>
+                        <input 
+                            type="text"
+                            id="aula"
+                            name="aula"
+                            value={aula}
+                            onChange={handleChange}
+                        />
+                    </div>
                   <div>
                       <button type="button" onClick={handleSendData}>
                           Enviar Ticket

@@ -97,9 +97,10 @@ app.post("/tickets", async (request, response)=>{
         let data=await db.collection('Tickets').find({}).toArray();
         let id_tik=data.length+1;
         addValue["id_tik"]=id_tik;
-        addValue["id_cor"]=verifiedToken.usuario;
+        addValue["id_cor"]=verifiedToken.id_cor;
         addValue["status"]="Abierto";
         addValue["fecha"]=new Date();
+        addValue["region"]=verifiedToken.region;
         data=await db.collection('Tickets').insertOne(addValue);
         response.json(data);
     }catch{
@@ -129,6 +130,7 @@ app.post("/registrarse", async(request, response)=>{
     let pass = request.body.password;
     let fname = request.body.fullName;
     let nivel = request.body.nivel;
+    let region = request.body.region;
 
     console.log(request.body)
     let data= await db.collection("Usuarios").findOne({"usuario": user});
@@ -136,7 +138,7 @@ app.post("/registrarse", async(request, response)=>{
         try{
             bcrypt.genSalt(10, (error, salt)=>{
                 bcrypt.hash(pass, salt, async(error, hash)=>{
-                    let usuarioAgregar={"id_cor":id_cor,"usuario": user, "password": hash, "fullName": fname,"nivel": nivel};
+                    let usuarioAgregar={"id_cor":id_cor,"usuario": user, "password": hash, "fullName": fname,"nivel": nivel, "region":region};
                     data= await db.collection("Usuarios").insertOne(usuarioAgregar);
                     response.sendStatus(201);
                 })

@@ -6,6 +6,8 @@ const Registrarse = () =>{
         username: "",
         password: "",
         fullName: "",
+        nivel:"",
+        region:"",
     });
 
     const handleChange= (event)=>{
@@ -64,6 +66,26 @@ const Registrarse = () =>{
                         id="fullName"
                         name="fullName"
                         value={datos.fullName}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="nivel">Nivel: </label>
+                    <input 
+                        type="text"
+                        id="nivel"
+                        name="nivel"
+                        value={datos.nivel}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="region">Region: </label>
+                    <input 
+                        type="text"
+                        id="region"
+                        name="region"
+                        value={datos.region}
                         onChange={handleChange}
                     />
                 </div>
