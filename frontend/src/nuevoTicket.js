@@ -35,11 +35,21 @@ const NuevoTicket = () => {
               throw new Error('No se pudieron subir los datos');
           }
       };
-      const {coordinador, categoria, subcategoria, status, descripcion, comentario}= datos;
+      const {prioridad,coordinador, categoria, subcategoria, status, descripcion}= datos;
       return(
           <div>
               <h2>Nuevo ticket</h2>
               <form>
+                <div>
+                    <label htmlFor="prioridad">Prioridad:</label>
+                    <input
+                        type='text'
+                        id='prioridad'
+                        name='prioridad'
+                        value={prioridad}
+                        onChange={handleChange}
+                    />
+                </div>
                   <div>
                       <label htmlFor="coordinador">Coordinador:</label>
                       <input 
@@ -87,16 +97,6 @@ const NuevoTicket = () => {
                           id="descripcion"
                           name="descripcion"
                           value={descripcion}
-                          onChange={handleChange}
-                      />
-                  </div>
-                  <div>
-                      <label htmlFor="comentario">Comentario:</label>
-                      <input 
-                          type="text"
-                          id="comentario"
-                          name="comentario"
-                          value={comentario}
                           onChange={handleChange}
                       />
                   </div>

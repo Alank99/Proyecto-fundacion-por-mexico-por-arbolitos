@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 
 async function connectDB(){
-    let client=new MongoClient("mongodb://127.0.0.1:27017/tc2007b")
+    let client=new MongoClient("mongodb://127.0.0.1:27017/PorMexico")
     await client.connect();
     db=client.db();
     console.log("conectado a la base de datos")
@@ -32,7 +32,7 @@ app.get("/tickets", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let authData=await db.collection("usuarios").findOne({"usuario": verifiedToken.usuario})
+        let authData=await db.collection("Usuarios").findOne({"usuario": verifiedToken.usuario})
         let parametersFind={}
         if(authData.permissions=="Coordinador"){
             parametersFind["usuario"]=verifiedToken.usuario;
@@ -45,7 +45,7 @@ app.get("/tickets", async (request, response)=>{
             let end=Number(request.query._end);
             let sorter={}
             sorter[sortBy]=sortOrder
-            let data=await db.collection('tickets').find(parametersFind).sort(sorter).project({_id:0}).toArray();
+            let data=await db.collection('Tickets').find(parametersFind).sort(sorter).project({_id:0}).toArray();
             response.set('Access-Control-Expose-Headers', 'X-Total-Count')
             response.set('X-Total-Count', data.length)
             data=data.slice(start, end)
@@ -53,13 +53,13 @@ app.get("/tickets", async (request, response)=>{
         }else if ("id" in request.query){
             let data=[]
             for (let index=0; index<request.query.id.length; index++){
-                let dataObtain=await db.collection('tickets').find({id: Number(request.query.id[index])}).project({_id:0}).toArray();
+                let dataObtain=await db.collection('Tickets').find({id_tik: Number(request.query.id[index])}).project({_id:0}).toArray();
                 data=await data.concat(dataObtain)
             }
             response.json(data);
         }else {
             let data=[]
-            data=await db.collection('tickets').find(request.query).project({_id:0}).toArray();
+            data=await db.collection('Tickets').find(request.query).project({_id:0}).toArray();
             response.set('Access-Control-Expose-Headers', 'X-Total-Count')
             response.set('X-Total-Count', data.length)
             response.json(data)
@@ -74,12 +74,12 @@ app.get("/tickets/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let authData=await db.collection("usuarios").findOne({"usuario": verifiedToken.usuario})
-        let parametersFind={"id": Number(request.params.id)}
+        let authData=await db.collection("Usuarios").findOne({"usuario": verifiedToken.usuario})
+        let parametersFind={"id_tik": Number(request.params.id)}
         if(authData.permissions=="Coordinador"){
             parametersFind["usuario"]=verifiedToken.usuario;
         }
-        let data=await db.collection('tickets').find(parametersFind).project({_id:0}).toArray();
+        let data=await db.collection('Tickets').find(parametersFind).project({_id:0}).toArray();
         log(verifiedToken.usuario, "ver objeto", request.params.id)
         response.json(data[0]);
     }catch{
@@ -94,11 +94,13 @@ app.post("/tickets", async (request, response)=>{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
         let addValue=request.body
-        let data=await db.collection('tickets').find({}).toArray();
-        let id=data.length+1;
-        addValue["id"]=id;
-        addValue["usuario"]=verifiedToken.usuario;
-        data=await db.collection('tickets').insertOne(addValue);
+        let data=await db.collection('Tickets').find({}).toArray();
+        let id_tik=data.length+1;
+        addValue["id_tik"]=id_tik;
+        addValue["id_cor"]=verifiedToken.usuario;
+        addValue["status"]="Abierto";
+        addValue["fecha"]=new Date();
+        data=await db.collection('Tickets').insertOne(addValue);
         response.json(data);
     }catch{
         response.sendStatus(401);
@@ -112,8 +114,8 @@ app.put("/tickets/:id", async (request, response)=>{
         let verifiedToken = await jwt.verify(token, "secretKey");
         let addValue=request.body
         addValue["id"]=Number(request.params.id);
-        let data=await db.collection("tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
-        data=await db.collection('tickets').find({"id": Number(request.params.id)}).project({_id:0, id:1, nombre:1, materia:1}).toArray();
+        let data=await db.collection("Tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
+        data=await db.collection('Tickets').find({"id": Number(request.params.id)}).project({_id:0, id:1, nombre:1, materia:1}).toArray();
         response.json(data[0]);
     }catch{
         response.sendStatus(401);
@@ -121,17 +123,21 @@ app.put("/tickets/:id", async (request, response)=>{
 })       
 
 app.post("/registrarse", async(request, response)=>{
-    let user=request.body.username;
-    let pass=request.body.password;
-    let fname=request.body.fullName;
+    let parametersFind = await db.collection("Usuarios").find({}).toArray();
+    let id_cor = parametersFind.length+1 ;
+    let user = request.body.username;
+    let pass = request.body.password;
+    let fname = request.body.fullName;
+    let nivel = request.body.nivel;
+
     console.log(request.body)
-    let data= await db.collection("usuarios").findOne({"usuario": user});
+    let data= await db.collection("Usuarios").findOne({"usuario": user});
     if(data==null){
         try{
             bcrypt.genSalt(10, (error, salt)=>{
                 bcrypt.hash(pass, salt, async(error, hash)=>{
-                    let usuarioAgregar={"usuario": user, "password": hash, "fullName": fname};
-                    data= await db.collection("usuarios").insertOne(usuarioAgregar);
+                    let usuarioAgregar={"id_cor":id_cor,"usuario": user, "password": hash, "fullName": fname,"nivel": nivel};
+                    data= await db.collection("Usuarios").insertOne(usuarioAgregar);
                     response.sendStatus(201);
                 })
             })
@@ -147,7 +153,7 @@ app.post("/registrarse", async(request, response)=>{
 app.post("/login", async(request, response)=>{
     let user=request.body.username;
     let pass=request.body.password;
-    let data= await db.collection("usuarios").findOne({"usuario": user});
+    let data= await db.collection("Usuarios").findOne({"usuario": user});
     if(data==null){
         response.sendStatus(401);
     }else{
@@ -168,7 +174,7 @@ app.delete("/tickets/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let data=await db.collection('tickets').deleteOne({"id": Number(request.params.id)});
+        let data=await db.collection('Tickets').deleteOne({"id": Number(request.params.id)});
         response.json(data);
     }catch{
         response.sendStatus(401);
