@@ -151,7 +151,7 @@ app.post("/registrarse", async(request, response)=>{
     }
 })
 
-
+/*
 app.post("/login", async(request, response)=>{
     let user=request.body.username;
     let pass=request.body.password;
@@ -170,7 +170,7 @@ app.post("/login", async(request, response)=>{
         })
     }
 })
-
+*/
 //delete
 app.delete("/tickets/:id", async (request, response)=>{
     try{
