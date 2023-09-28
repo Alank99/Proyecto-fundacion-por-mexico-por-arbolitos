@@ -28,13 +28,11 @@ export const TicketEdit = () => (
 export const TicketCreate = () => (
     <Create>
         <SimpleForm>
-            <TextInput source="id" disabled/>
-            <TextInput source="coordinador"/>
+            <TextInput source="prioridad" />
             <TextInput source="categoria" />
             <TextInput source="subcategoria" />
-            <TextInput source="status" />
             <TextInput source="descripcion" />
-            <TextInput source="comentario" multiline rows={5}/>
+            <TextInput source="aula"/>
         </SimpleForm>
     </Create>
 );

@@ -4,12 +4,10 @@ import host from './const.js'
 const NuevoTicket = () => {
     const [datos, setDatos] = useState({
         prioridad: "",
-        coordinador: "",
         categoria: "",
         subcategoria: "",
-        status: "",
         descripcion: "",
-        aula: ""
+        aula: "",
       });
   
       const handleChange = (e) => {
@@ -37,7 +35,7 @@ const NuevoTicket = () => {
               throw new Error('No se pudieron subir los datos');
           }
       };
-      const {prioridad,coordinador, categoria, subcategoria, status, descripcion,aula}= datos;
+      const {prioridad, categoria, subcategoria, descripcion,aula}= datos;
       return(
           <div>
               <h2>Nuevo ticket</h2>
@@ -52,16 +50,6 @@ const NuevoTicket = () => {
                         onChange={handleChange}
                     />
                 </div>
-                  <div>
-                      <label htmlFor="coordinador">Coordinador:</label>
-                      <input 
-                          type="text"
-                          id="coordinador"
-                          name="coordinador"
-                          value={coordinador}
-                          onChange={handleChange}
-                      />
-                  </div>
                   <div>
                       <label htmlFor="categoria">Categoria:</label>
                       <input 
@@ -79,16 +67,6 @@ const NuevoTicket = () => {
                           id="subcategoria"
                           name="subcategoria"
                           value={subcategoria}
-                          onChange={handleChange}
-                      />
-                  </div>
-                  <div>
-                      <label htmlFor="status">Status:</label>
-                      <input 
-                          type="text"
-                          id="status"
-                          name="status"
-                          value={status}
                           onChange={handleChange}
                       />
                   </div>

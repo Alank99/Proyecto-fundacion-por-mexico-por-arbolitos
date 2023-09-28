@@ -146,6 +146,7 @@ app.post("/tickets", async (request, response)=>{
         let id_tik=data.length+1;
         addValue["id"]=id_tik;
         addValue["id_cor"]=verifiedToken.id_cor;
+        addValue["usuario"]=verifiedToken.usuario;
         addValue["status"]="Abierto";
         addValue["fecha"]=new Date();
         addValue["region"]=verifiedToken.region;
@@ -170,7 +171,7 @@ app.put("/tickets/:id", async (request, response)=>{
         response.sendStatus(401);
     }
 })
-*/
+
 //delete
 app.delete("/tickets/:id", async (request, response)=>{
     try{
