@@ -5,14 +5,15 @@ bodyParser=require('body-parser')
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken")
 
+const host = "127.0.0.1"
+
 let db;
 const app=express();
 app.use(cors());
 app.use(bodyParser.json());
 
-
 async function connectDB(){
-    let client=new MongoClient("mongodb://127.0.0.1:27017/PorMexico")
+    let client=new MongoClient(`mongodb://${host}:27017/PorMexico`)
     await client.connect();
     db=client.db();
     console.log("conectado a la base de datos")
@@ -26,6 +27,53 @@ async function log(sujeto, accion, objeto){
     toLog["objeto"]=objeto;
     await db.collection("log").insertOne(toLog);
 }
+
+app.post("/registrarse", async(request, response)=>{
+    let parametersFind = await db.collection("Usuarios").find({}).toArray();
+    let id_cor = parametersFind.length+1 ;
+    let user = request.body.username;
+    let pass = request.body.password;
+    let fname = request.body.fullName;
+    let nivel = request.body.nivel;
+    let region = request.body.region;
+
+    console.log(request.body)
+    let data= await db.collection("Usuarios").findOne({"usuario": user});
+    if(data==null){
+        try{
+            bcrypt.genSalt(10, (error, salt)=>{
+                bcrypt.hash(pass, salt, async(error, hash)=>{
+                    let usuarioAgregar={"id_cor":id_cor,"usuario": user, "password": hash, "fullName": fname,"nivel": nivel, "region":region};
+                    data= await db.collection("Usuarios").insertOne(usuarioAgregar);
+                    response.sendStatus(201);
+                })
+            })
+        }catch{
+            response.sendStatus(401);
+        }
+    }else{
+        response.sendStatus(401)
+    }
+})
+
+app.post("/login", async(request, response)=>{
+    let user=request.body.username;
+    let pass=request.body.password;
+    let data= await db.collection("Usuarios").findOne({"usuario": user});
+    if(data==null){
+        response.sendStatus(401);
+    }else{
+        bcrypt.compare(pass, data.password, (error, result)=>{
+            if(result){
+                let token=jwt.sign({usuario: data.usuario}, "secretKey", {expiresIn: 600});
+                log(user, "login", "");
+                response.json({"token": token, "id": data.usuario, "fullName": data.fullName})
+            }else{
+                response.sendStatus(401)
+            }
+        })
+    }
+})
 
 //getList, getMany, getManyReference
 app.get("/tickets", async (request, response)=>{
@@ -121,54 +169,6 @@ app.put("/tickets/:id", async (request, response)=>{
     }catch{
         response.sendStatus(401);
     }
-})       
-
-app.post("/registrarse", async(request, response)=>{
-    let parametersFind = await db.collection("Usuarios").find({}).toArray();
-    let id_cor = parametersFind.length+1 ;
-    let user = request.body.username;
-    let pass = request.body.password;
-    let fname = request.body.fullName;
-    let nivel = request.body.nivel;
-    let region = request.body.region;
-
-    console.log(request.body)
-    let data= await db.collection("Usuarios").findOne({"usuario": user});
-    if(data==null){
-        try{
-            bcrypt.genSalt(10, (error, salt)=>{
-                bcrypt.hash(pass, salt, async(error, hash)=>{
-                    let usuarioAgregar={"id_cor":id_cor,"usuario": user, "password": hash, "fullName": fname,"nivel": nivel, "region":region};
-                    data= await db.collection("Usuarios").insertOne(usuarioAgregar);
-                    response.sendStatus(201);
-                })
-            })
-        }catch{
-            response.sendStatus(401);
-        }
-    }else{
-        response.sendStatus(401)
-    }
-})
-
-/*
-app.post("/login", async(request, response)=>{
-    let user=request.body.username;
-    let pass=request.body.password;
-    let data= await db.collection("Usuarios").findOne({"usuario": user});
-    if(data==null){
-        response.sendStatus(401);
-    }else{
-        bcrypt.compare(pass, data.password, (error, result)=>{
-            if(result){
-                let token=jwt.sign({usuario: data.usuario}, "secretKey", {expiresIn: 600});
-                log(user, "login", "");
-                response.json({"token": token, "id": data.usuario, "fullName": data.fullName})
-            }else{
-                response.sendStatus(401)
-            }
-        })
-    }
 })
 */
 //delete
@@ -182,6 +182,7 @@ app.delete("/tickets/:id", async (request, response)=>{
         response.sendStatus(401);
     }
 })
+
 app.listen(1337, ()=>{
     connectDB();
     console.log("Servidor escuchando en puerto 1337")
