@@ -1,3 +1,4 @@
 import jsonServerProvider from "ra-data-json-server";
+import host from './const.js'
 
-export const dataProvider = jsonServerProvider("http://127.0.0.1:1337");
+export const dataProvider = jsonServerProvider(`http://${host}:1337`);
