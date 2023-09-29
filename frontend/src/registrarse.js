@@ -72,11 +72,13 @@ const Registrarse = () =>{
                 </div>
                 <div>
                     <label htmlFor="nivel">Nivel: </label>
-                    <select name="cars" id="cars">
-                        <option value="Local">Local</option>
-                        <option value="Nacional">Nacional</option>
-                        <option value="Ejecutivo">Ejecutivo</option>
-                    </select>
+                    <input 
+                        type="text"
+                        id="nivel"
+                        name="nivel"
+                        value={datos.nivel}
+                        onChange={handleChange}
+                    />
                 </div>
                 <div>
                     <label htmlFor="region">Region: </label>
