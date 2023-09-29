@@ -9,7 +9,7 @@ import authProvider from './authProvider';
 
 const App = () =>{
   return(
-      <Admin dataProvider={dataProvider}  i18nProvider={i18nProvider}>
+      <Admin dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18nProvider}>
         <Resource name="tickets" list={TicketList} edit={TicketEdit} create={TicketCreate} />
         <CustomRoutes>
           <Route path="/registrarse"  element={<Registrarse />}/>
