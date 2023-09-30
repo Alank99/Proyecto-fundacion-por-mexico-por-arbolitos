@@ -123,12 +123,13 @@ app.get("/tickets/:id", async (request, response)=>{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
-        let parametersFind={"id_tik": Number(request.params.id)}
-        if(authData.permissions=="Coordinador"){
-            parametersFind["usuario"]=verifiedToken.usuario;
+        let parametersFind={"id": Number(request.params.id)}
+        if(authData.nivel=="local"){
+            parametersFind["id_cor"]=verifiedToken.id_cor;
         }
         let data=await db.collection('Tickets').find(parametersFind).project({_id:0}).toArray();
-        log(verifiedToken.usuario, "ver objeto", request.params.id)
+        log(verifiedToken.id_cor, "ver objeto", request.params.id)
+        console.log("se ve el objeto")
         response.json(data[0]);
     }catch{
         response.sendStatus(401);
