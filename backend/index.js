@@ -65,7 +65,7 @@ app.post("/login", async(request, response)=>{
     }else{
         bcrypt.compare(pass, data.password, (error, result)=>{
             if(result){
-                let token=jwt.sign({ id_cor: data.id_cor}, "secretKey", {expiresIn: 600});
+                let token=jwt.sign({ id_cor: data.id_cor, usuario: data.usuario}, "secretKey", {expiresIn: 600});
                 log(user, "login", "");
                 response.json({"token": token,"id_cor": data.id_cor})
             }else{
@@ -81,6 +81,8 @@ app.get("/tickets", async (request, response)=>{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
+        console.log(authData)
+        console.log("datos autenticados")
         let parametersFind={}
         if(authData.nivel=="local"){
             parametersFind["id_cor"]=verifiedToken.id_cor;
