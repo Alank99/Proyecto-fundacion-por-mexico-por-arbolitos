@@ -65,9 +65,9 @@ app.post("/login", async(request, response)=>{
     }else{
         bcrypt.compare(pass, data.password, (error, result)=>{
             if(result){
-                let token=jwt.sign({ id_cor: data.id_cor, usuario: data.usuario}, "secretKey", {expiresIn: 600});
+                let token=jwt.sign({ id_cor: data.id_cor, usuario: data.usuario , nivel:data.nivel ,region:data.region}, "secretKey", {expiresIn: 600});
                 log(user, "login", "");
-                response.json({"token": token,"id_cor": data.id_cor})
+                response.json({"token": token,"id_cor": data.id_cor, nivel:data.nivel ,region:data.region})
             }else{
                 response.sendStatus(401)
             }
@@ -76,48 +76,58 @@ app.post("/login", async(request, response)=>{
 })
 
 //getList, getMany, getManyReference
-app.get("/tickets", async (request, response)=>{
-    try{
-        let token=request.get("Authentication");
-        let verifiedToken = await jwt.verify(token, "secretKey");
-        let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
-        console.log(authData)
-        console.log("datos autenticados")
-        let parametersFind={}
-        if(authData.nivel=="local"){
-            parametersFind["id_cor"]=verifiedToken.id_cor;
+app.get("/tickets", async (request, response) => {
+    try {
+        let token = request.get("Authentication");
+        if (!token) {
+            response.sendStatus(401);
+            return;
         }
-        
-        if ("_sort" in request.query){
-            let sortBy=request.query._sort;
-            let sortOrder=request.query._order=="ASC"?1:-1;
-            let start=Number(request.query._start);
-            let end=Number(request.query._end);
-            let sorter={}
-            sorter[sortBy]=sortOrder
-            let data=await db.collection('Tickets').find(parametersFind).sort(sorter).project({_id:0}).toArray();
-            response.set('Access-Control-Expose-Headers', 'X-Total-Count')
-            response.set('X-Total-Count', data.length)
-            data=data.slice(start, end)
+        let verifiedToken = await jwt.verify(token, "secretKey");
+        console.log(verifiedToken.id_cor);
+        let authData = await db.collection("Usuarios").findOne({ "id_cor": verifiedToken.id_cor });
+        if (!authData || !authData.nivel) {
+            response.sendStatus(401);
+            return;
+        }
+        let parametersFind = {};
+        if (authData.nivel === "local") {
+            parametersFind["id_cor"] = authData.id_cor;
+        } else if (authData.nivel === "nacional") {
+            parametersFind["region"] = authData.region;
+        }
+        if ("_sort" in request.query) {
+            let sortBy = request.query._sort;
+            let sortOrder = request.query._order == "ASC" ? 1 : -1;
+            let start = Number(request.query._start);
+            let end = Number(request.query._end);
+            let sorter = {};
+            sorter[sortBy] = sortOrder;
+            let data = await db.collection("Tickets").find(parametersFind).sort(sorter).project({ _id: 0 }).toArray();
+            response.set("Access-Control-Expose-Headers", "X-Total-Count");
+            response.set("X-Total-Count", data.length);
+            data = data.slice(start, end);
             response.json(data);
-        }else if ("id" in request.query){
-            let data=[]
-            for (let index=0; index<request.query.id.length; index++){
-                let dataObtain=await db.collection('Tickets').find({id: Number(request.query.id[index])}).project({_id:0}).toArray();
-                data=await data.concat(dataObtain)
+        } else if ("id" in request.query) {
+            let data = [];
+            for (let index = 0; index < request.query.id.length; index++) {
+                let dataObtain = await db.collection("Tickets").find({ id: Number(request.query.id[index]) }).project({ _id: 0 }).toArray();
+                data = await data.concat(dataObtain);
             }
             response.json(data);
-        }else {
-            let data=[]
-            data=await db.collection('Tickets').find(request.query).project({_id:0}).toArray();
-            response.set('Access-Control-Expose-Headers', 'X-Total-Count')
-            response.set('X-Total-Count', data.length)
-            response.json(data)
+        } else {
+            let data = [];
+            data = await db.collection("Tickets").find(request.query).project({ _id: 0 }).toArray();
+            response.set("Access-Control-Expose-Headers", "X-Total-Count");
+            response.set("X-Total-Count", data.length);
+            response.json(data);
         }
-    }catch{
+    } catch {
         response.sendStatus(401);
     }
-})
+});
+
+
 
 //getOne
 app.get("/tickets/:id", async (request, response)=>{
@@ -152,7 +162,7 @@ app.post("/tickets", async (request, response)=>{
         addValue["id_cor"]=verifiedToken.id_cor;
         addValue["usuario"]=authData.usuario;
         addValue["status"]="Abierto";
-        addValue["fecha"]=new Date();
+        addValue["fecha"] = new Date().toLocaleString();
         addValue["region"]=authData.region;
         data=await db.collection('Tickets').insertOne(addValue);
         console.log(addValue)
@@ -188,6 +198,29 @@ app.delete("/tickets/:id", async (request, response)=>{
         response.sendStatus(401);
     }
 })
+
+//envia comentarios
+app.post("/tickets/:id/comentarios", async (request, response)=>{
+    try{
+        let token=request.get("Authentication");
+        let verifiedToken = await jwt.verify(token, "secretKey");
+        let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
+        let addValue=request.body
+        let data=await db.collection('Tickets').find({}).toArray();
+        let id_tik=data.length+1;
+        addValue["id"]=id_tik;
+        addValue["id_cor"]=verifiedToken.id_cor;
+        addValue["usuario"]=authData.usuario;
+        addValue["fecha"] = new Date().toLocaleString();
+        data=await db.collection('Tickets').updateOne({"id": Number(request.params.id)}, {"$push": {"comentarios": addValue}});
+        response.json(data);
+    }catch{
+        response.sendStatus(401);
+    }
+})
+
+
+
 
 app.listen(1337, ()=>{
     connectDB();
