@@ -181,7 +181,13 @@ app.put("/tickets/:id", async (request, response)=>{
         addValue["id"]=Number(request.params.id);
         let data=await db.collection("Tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
         data=await db.collection('Tickets').find({"id": Number(request.params.id)}).project({_id:0, id:1, nombre:1, materia:1}).toArray();
+        let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
+        if(data.id_cor === verifiedToken.id_cor || authData.region === data.region || authData.nivel === "ejecutivo" ){
         response.json(data[0]);
+        }
+        else{
+            response.sendStatus(401);
+        }
     }catch{
         response.sendStatus(401);
     }
@@ -199,25 +205,41 @@ app.delete("/tickets/:id", async (request, response)=>{
     }
 })
 
-//envia comentarios
+//crear comentario
 app.post("/tickets/:id/comentarios", async (request, response)=>{
-    try{
+     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
+        let ticket = await db.collection("Tickets").findOne({"id": Number(request.params.id)});
         let addValue=request.body
-        let data=await db.collection('Tickets').find({}).toArray();
-        let id_tik=data.length+1;
-        addValue["id"]=id_tik;
+        addValue["id_tik"]=ticket.id;
         addValue["id_cor"]=verifiedToken.id_cor;
-        addValue["usuario"]=authData.usuario;
-        addValue["fecha"] = new Date().toLocaleString();
-        data=await db.collection('Tickets').updateOne({"id": Number(request.params.id)}, {"$push": {"comentarios": addValue}});
+        data=await db.collection('Tickets').insertOne(addValue);
+        console.log(addValue)
         response.json(data);
     }catch{
         response.sendStatus(401);
     }
 })
+
+
+//envia comentarios
+app.get("/tickets/:id/comentarios", async (request, response)=>{
+    try{
+        let token=request.get("Authentication");
+        let verifiedToken = await jwt.verify(token, "secretKey");
+        let parametersFind={"id_tik": Number(request.params.id)}
+        let data=await db.collection('Comentarios').find(parametersFind).project({_id:0}).toArray();
+        log(verifiedToken.id_cor, "ver objeto", request.params.id)
+        console.log("se ve el objeto")
+        response.json(data);
+    }catch{
+        response.sendStatus(401);
+    }
+})
+
+
 
 
 

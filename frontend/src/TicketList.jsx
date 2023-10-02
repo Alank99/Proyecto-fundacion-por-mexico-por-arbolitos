@@ -1,4 +1,5 @@
 import { Datagrid, List, TextField, Edit, SimpleForm, TextInput, Create} from 'react-admin';
+import NuevoComentario from './nuevoComentario';
 
 
 export const TicketList = () => (
@@ -30,6 +31,7 @@ export const TicketEdit = () => (
             <TextInput source="status"/>
             <TextField source="fecha"/>
             <TextField source="region"/>
+            <NuevoComentario/>
         </SimpleForm>
     </Edit>
 );
