@@ -28,7 +28,7 @@ const NuevoComentario = () => {
               }
               
           } catch {
-              throw new Error('No se pudieron subir el comentario');
+              throw new Error('No se pudo subir');
           }
       };
       const {descripcion}= datos;

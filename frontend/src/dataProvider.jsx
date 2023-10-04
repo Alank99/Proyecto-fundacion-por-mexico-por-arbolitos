@@ -10,4 +10,4 @@ const fetchJsonUtil = (url, options={})=>{
     return fetchUtils.fetchJson(url, options);
 };
 
-export const dataProvider = jsonServerProvider(`http://${host}:1337`, fetchJsonUtil);
+export const dataProvider = jsonServerProvider(`https://${host}:1337`, fetchJsonUtil);

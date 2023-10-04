@@ -2,7 +2,7 @@ import host from './const.js'
 
 const authProvider = {
     login: async ({ username , password }) => {
-        const request = new Request(`http://${host}:1337/login`, {
+        const request = new Request(`https://${host}:1337/login`, {
             method: 'POST',
             body: JSON.stringify({ "username":username, "password": password }),
             headers: new Headers({ 'Content-Type': 'application/json' }),

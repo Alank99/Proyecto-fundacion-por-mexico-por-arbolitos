@@ -4,6 +4,8 @@ var cors=require('cors')
 bodyParser=require('body-parser')
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken")
+const https=require("https")
+const fs=require("fs")
 
 const host = "127.0.0.1"
 
@@ -183,7 +185,7 @@ app.put("/tickets/:id", async (request, response)=>{
         data=await db.collection('Tickets').find({"id": Number(request.params.id)}).project({_id:0, id:1, nombre:1, materia:1}).toArray();
         let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
         if(data.id_cor === verifiedToken.id_cor || authData.region === data.region || authData.nivel === "ejecutivo" ){
-        response.json(data[0]);
+            response.json(data[0]);
         }
         else{
             response.sendStatus(401);
@@ -241,10 +243,15 @@ app.get("/tickets/:id/comentarios", async (request, response)=>{
 
 
 
-
-
-
-app.listen(1337, ()=>{
+https.createServer({
+    cert:fs.readFileSync("backend.cer"),
+    key:fs.readFileSync("backend.key"),
+},
+app).listen(1337, ()=>{
     connectDB();
     console.log("Servidor escuchando en puerto 1337")
 })
+
+
+
+

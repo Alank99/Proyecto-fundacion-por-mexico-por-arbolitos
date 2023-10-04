@@ -10,7 +10,7 @@ import { MyLayout } from './CustomLayout';
 
 const App = () =>{
   return(
-      <Admin dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18nProvider} layout={MyLayout}>
+      <Admin dataProvider={dataProvider}  i18nProvider={i18nProvider} layout={MyLayout}>
         <Resource name="tickets" list={TicketList} edit={TicketEdit} create={TicketCreate} />
         <CustomRoutes>
           <Route path="/registrarse"  element={<Registrarse />}/>
