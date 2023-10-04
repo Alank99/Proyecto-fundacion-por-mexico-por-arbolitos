@@ -7,10 +7,11 @@ import { i18nProvider } from './i18nProvider.tsx';
 import Registrarse from "./registrarse";
 import authProvider from './authProvider';
 import { MyLayout } from './CustomLayout';
+import { CustomLogin } from './CustomLogin';  
 
 const App = () =>{
   return(
-      <Admin dataProvider={dataProvider}  i18nProvider={i18nProvider} layout={MyLayout}>
+      <Admin dataProvider={dataProvider}  i18nProvider={i18nProvider} layout={MyLayout} authProvider={authProvider} loginPage = {CustomLogin}>
         <Resource name="tickets" list={TicketList} edit={TicketEdit} create={TicketCreate} />
         <CustomRoutes>
           <Route path="/registrarse"  element={<Registrarse />}/>
