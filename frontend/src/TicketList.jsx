@@ -1,11 +1,13 @@
-import { Datagrid, List, TextField, Edit, SimpleForm, TextInput,Create,SelectInput} from 'react-admin';
+import { Datagrid, List, TextField, Edit, SimpleForm, TextInput, Link ,Create,SelectInput, EditButton, SimpleShowLayout, Show, useGetList, useGetOne } from 'react-admin';
 import {useState,useEffect} from 'react';
 import {categorias, subcategoria, prioridad,status} from './formato_ticket';
+
+import {useParams,useHistory} from 'react-router-dom';
 
 
 export const TicketList = () => (
     <List>
-        <Datagrid rowClick="edit">
+        <Datagrid rowClick="show">
             <TextField source="id" />
             <TextField source="id_cor" label="coordinador"/>
             <TextField source="categoria"/>
@@ -13,11 +15,39 @@ export const TicketList = () => (
             <TextField source="region"/>
             <TextField source="fecha"/>
             <TextField source="status"/>
+            <EditButton/>
         </Datagrid>
     </List>
 );
 
+export const TicketShow = (props) => {
+  const { id } = useParams();
+  const history = useHistory(); // Obtiene el objeto history
 
+  const redirectToComentariosCreate = () => {
+      history.push(`/Comentarioscreate?id_tik=${id}`); // Redirige a la página de creación de comentarios
+  };
+
+  return (
+      <Show {...props}>
+          <SimpleShowLayout>
+              <TextField source="id" label="ID" />
+              <TextField source="id_cor" label="Coordinador" />
+              <TextField source="prioridad" label="Prioridad" />
+              <TextField source="categoria" label="Categoría" />
+              <TextField source="subcategoria" label="Subcategoría" />
+              <TextField source="descripcion" label="Descripción" />
+              <TextField source="aula" label="Aula" />
+              <TextField source="status" label="Estado" />
+              <TextField source="fecha" label="Fecha" />
+              <TextField source="region" label="Región" />
+              <Button onClick={redirectToComentariosCreate}>
+                  Añadir comentario
+              </Button>
+          </SimpleShowLayout>
+      </Show>
+  );
+};
 
 export const TicketEdit = () => (
   <Edit>
@@ -36,58 +66,7 @@ export const TicketEdit = () => (
   </Edit>
 );
 
-/*
-const auth = JSON.parse(localStorage.getItem('identity'));
-console.log(auth);
 
-const TicketEditLocal = () => (
-  <Edit>
-    <SimpleForm>
-      <TextField source="id" />
-      <TextField source="id_cor" label="coordinador" />
-      <TextField source="prioridad" />
-      <TextField source="categoria" />
-      <TextField source="subcategoria" />
-      <TextField source="descripcion" />
-      <TextField source="aula" />
-      <TextField source="status" />
-      <TextField source="fecha" />
-      <TextField source="region" />
-      <p>Si funciona para el nivel local</p>
-    </SimpleForm>
-  </Edit>
-);
-
-const TicketEditNacionalEjecutivo = () => (
-  <Edit>
-    <SimpleForm>
-      <TextField source="id" />
-      <TextField source="id_cor" label="coordinador" />
-      <TextField source="prioridad" />
-      <TextField source="categoria" />
-      <TextField source="subcategoria" />
-      <TextField source="descripcion" />
-      <TextField source="aula" />
-      <TextInput source="status" />
-      <TextField source="fecha" />
-      <TextField source="region" />
-      <p>Si funciona para el nivel nacional</p>
-    </SimpleForm>
-  </Edit>
-);
-
-export const TicketEdit = () => {
-  if (!auth || !auth.nivel) {
-    return null;
-  }
-  if (auth.nivel === 'local') {
-    return <TicketEditLocal />;
-  } else if (auth.nivel === 'nacional' || auth.nivel === 'ejecutivo') {
-    return <TicketEditNacionalEjecutivo />;
-  }
-};
-
-*/
 
 export const TicketCreate = () => {
   const [categoriaSec, setCategoriasSec] = useState("");

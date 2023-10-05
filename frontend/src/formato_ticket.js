@@ -8,20 +8,20 @@ export const categorias = [
 
 export const subcategoria = [
     
-    { id: 'luz', name: 'luz', categorias_id: 'Servicios' },
-    { id: 'agua', name: 'agua', categorias_id: 'Servicios' },
-    { id: 'internet', name: 'internet', categorias_id: 'Servicios' },
-    { id: 'limpieza', name: 'limpieza', categorias_id: 'Limpieza' },
-    { id: 'pintura', name: 'pintura', categorias_id: 'Mantenimiento' },
-    { id: 'plomeria', name: 'plomeria', categorias_id: 'Mantenimiento' },
-    { id: 'seguridad', name: 'seguridad', categorias_id: 'Seguridad' },
-    { id: 'otros', name: 'otros', categorias_id: 'Otros' },
+    { id: 'luz', name: 'Luz', categorias_id: 'Servicios' },
+    { id: 'agua', name: 'Agua', categorias_id: 'Servicios' },
+    { id: 'internet', name: 'Internet', categorias_id: 'Servicios' },
+    { id: 'limpieza', name: 'Limpieza', categorias_id: 'Limpieza' },
+    { id: 'pintura', name: 'Pintura', categorias_id: 'Mantenimiento' },
+    { id: 'plomeria', name: 'Plomeria', categorias_id: 'Mantenimiento' },
+    { id: 'seguridad', name: 'Seguridad', categorias_id: 'Seguridad' },
+    { id: 'otros', name: 'Otros', categorias_id: 'Otros' },
 ];
 
 export const prioridad = [
-    { id: 'baja', name: 'baja' },
-    { id: 'media', name: 'media' },
-    { id: 'alta', name: 'alta' },
+    { id: 'baja', name: 'Baja' },
+    { id: 'media', name: 'Media' },
+    { id: 'alta', name: 'Alta' },
 ];
 
 export const region = [
