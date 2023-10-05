@@ -61,7 +61,7 @@ const Registrarse = () =>{
                     />
                 </div>
                 <div>
-                    <label htmlFor="fullName">Nombre Completo: </label>
+                    <label htmlFor="fullName">Nombre completo: </label>
                     <input 
                         type="text"
                         id="fullName"
@@ -81,7 +81,7 @@ const Registrarse = () =>{
                     />
                 </div>
                 <div>
-                    <label htmlFor="region">Region: </label>
+                    <label htmlFor="region">Región: </label>
                     <input 
                         type="text"
                         id="region"

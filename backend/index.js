@@ -227,7 +227,6 @@ app.post("/comentarios", async (request, response)=>{
 }) 
 
 
-
 //envia comentarios
 app.get("/tickets/:id/comentarios", async (request, response)=>{
     try{

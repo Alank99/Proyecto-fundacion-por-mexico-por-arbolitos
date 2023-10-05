@@ -1,6 +1,8 @@
 import host from './const.js'
 
 const authProvider = {
+    buttonColor: '#426FA6',
+    
     login: async ({ username , password }) => {
         const request = new Request(`https://${host}:1337/login`, {
             method: 'POST',
