@@ -208,22 +208,24 @@ app.delete("/tickets/:id", async (request, response)=>{
 })
 
 //crear comentario
-app.post("/tickets/:id/comentarios", async (request, response)=>{
-     try{
+app.post("/comentarios", async (request, response)=>{
+    try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
-        let ticket = await db.collection("Tickets").findOne({"id": Number(request.params.id)});
         let addValue=request.body
-        addValue["id_tik"]=ticket.id;
+        let data=await db.collection('Comentarios').find({}).toArray();
+        let id=data.length+1;
+        addValue["id"]=id;
         addValue["id_cor"]=verifiedToken.id_cor;
+        addValue["fecha"] = new Date().toLocaleString();
         data=await db.collection('Tickets').insertOne(addValue);
         console.log(addValue)
         response.json(data);
     }catch{
         response.sendStatus(401);
     }
-})
+}) 
+
 
 
 //envia comentarios
@@ -251,6 +253,7 @@ app).listen(1337, ()=>{
     connectDB();
     console.log("Servidor escuchando en puerto 1337")
 })
+
 
 
 
