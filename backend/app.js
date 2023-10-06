@@ -4,8 +4,6 @@ var cors=require('cors')
 bodyParser=require('body-parser')
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken")
-const https=require("https")
-const fs=require("fs")
 
 const host = "127.0.0.1"
 
@@ -39,7 +37,7 @@ app.post("/registrarse", async(request, response)=>{
     let nivel = request.body.nivel;
     let region = request.body.region;
 
-    console.log(request.body)
+    //console.log(request.body)
     let data= await db.collection("Usuarios").findOne({"usuario": user});
     if(data==null){
         try{
@@ -86,7 +84,7 @@ app.get("/tickets", async (request, response) => {
             return;
         }
         let verifiedToken = await jwt.verify(token, "secretKey");
-        console.log(verifiedToken.id_cor);
+        //console.log(verifiedToken.id_cor);
         let authData = await db.collection("Usuarios").findOne({ "id_cor": verifiedToken.id_cor });
         if (!authData || !authData.nivel) {
             response.sendStatus(401);
@@ -143,7 +141,7 @@ app.get("/tickets/:id", async (request, response)=>{
         }
         let data=await db.collection('Tickets').find(parametersFind).project({_id:0}).toArray();
         log(verifiedToken.id_cor, "ver objeto", request.params.id)
-        console.log("se ve el objeto")
+        //console.log("se ve el objeto")
         response.json(data[0]);
     }catch{
         response.sendStatus(401);
@@ -167,7 +165,7 @@ app.post("/tickets", async (request, response)=>{
         addValue["fecha"] = new Date().toLocaleString();
         addValue["region"]=authData.region;
         data=await db.collection('Tickets').insertOne(addValue);
-        console.log(addValue)
+        //console.log(addValue)
         response.json(data);
     }catch{
         response.sendStatus(401);
@@ -219,7 +217,7 @@ app.post("/comentarios", async (request, response)=>{
         addValue["id_cor"]=verifiedToken.id_cor;
         addValue["fecha"] = new Date().toLocaleString();
         data=await db.collection('Tickets').insertOne(addValue);
-        console.log(addValue)
+        //console.log(addValue)
         response.json(data);
     }catch{
         response.sendStatus(401);
@@ -235,24 +233,11 @@ app.get("/tickets/:id/comentarios", async (request, response)=>{
         let parametersFind={"id_tik": Number(request.params.id)}
         let data=await db.collection('Comentarios').find(parametersFind).project({_id:0}).toArray();
         log(verifiedToken.id_cor, "ver objeto", request.params.id)
-        console.log("se ve el objeto")
+        //console.log("se ve el objeto")
         response.json(data);
     }catch{
         response.sendStatus(401);
     }
 })
 
-
-
-https.createServer({
-    cert:fs.readFileSync("backend.cer"),
-    key:fs.readFileSync("backend.key"),
-},
-app).listen(1337, ()=>{
-    connectDB();
-    console.log("Servidor escuchando en puerto 1337")
-})
-
-
-
-
+module.exports = {app, connectDB};

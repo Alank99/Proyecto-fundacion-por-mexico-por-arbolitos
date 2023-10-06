@@ -11,6 +11,6 @@ Para instalar, ejecutar:
 
 Para ejecutar, correr
     Desde la carpeta backend
-        node index.js
+        npm start
     Desde la carpeta frontent
         npm start
