@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route} from 'react-router-dom';
-import { Admin, Resource, CustomRoutes, ShowGuesser} from 'react-admin';
+import { Admin, Resource, CustomRoutes} from 'react-admin';
 import "./global.css"
-import { TicketList, TicketEdit, TicketCreate } from './TicketList';
+import { TicketList, TicketEdit, TicketCreate, TicketShow } from './TicketList';
 import { dataProvider } from "./dataProvider";
 import { i18nProvider } from './i18nProvider.tsx';
 import Registrarse from "./registrarse";
@@ -13,9 +13,8 @@ import { Dashboard } from './Dashboard';
 
 const App = () =>{
   return(
-      <Admin dataProvider={dataProvider} authProvider={authProvider}  i18nProvider={i18nProvider} layout={MyLayout}>
+      <Admin dataProvider={dataProvider} authProvider={authProvider}  i18nProvider={i18nProvider} layout={MyLayout} loginPage={CustomLogin} dashboard={Dashboard}>
         <Resource name="tickets" list={TicketList} show={TicketShow} edit={TicketEdit} create={TicketCreate} />
-        <Resource name="comentarios" list={ComentariosList} create={Comentarioscreate} />
         <CustomRoutes>
           <Route path="/registrarse"  element={<Registrarse />}/>
         </CustomRoutes>
