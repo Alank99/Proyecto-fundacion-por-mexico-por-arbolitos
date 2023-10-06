@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import {useRefresh, useNotify} from 'react-admin';
 import host from './const.js'
 
-const NuevoComentario = () => {
+const NuevoComentario = (props) => {
+    const refresh = useRefresh();
+    const notify = useNotify();
+
     const [datos, setDatos] = useState({
-        descripcion: "",
+        contenido: "",
       });
   
       const handleChange = (e) => {
@@ -14,34 +18,38 @@ const NuevoComentario = () => {
         };
   
       const handleSendData = async() => {
-          console.log(JSON.stringify(datos))
+          //console.log(props.id_tik)
           // Convert the form data to JSON
-          const request = await new Request(`http://${host}:1337/tickets/:id/comentario`, {
+          const request = await new Request(`https://${host}:1337/comentarios/${Number(props.id_tik)}`, {
             method: 'POST',
               body: JSON.stringify(datos),
-              headers: new Headers({ 'Content-Type': 'application/json' }),
+              headers: new Headers({ 'Content-Type': 'application/json' , "Authentication": localStorage.getItem("auth") }),
           });
           try {
               const response = await fetch(request);
               if (response.status < 200 || response.status >= 300) {
                   throw new Error(response.statusText);
               }
+              notify("Comentario se ha subido correctamente");
+              refresh();
               
           } catch {
               throw new Error('No se pudo subir');
           }
       };
-      const {descripcion}= datos;
+      const {contenido}= datos;
       return(
           <div>
               <form>
                 <div>
-                    <label htmlFor="descripcion">descripcion:</label>
-                    <input
+                    <label htmlFor="contenido">Nuevo comentario:</label>
+                    <br/>
+                    <textarea
+                        placeholder='Ingresa un comentario'
                         type='text'
-                        id='descripcion'
-                        name='descripcion'
-                        value={descripcion}
+                        id='contenido'
+                        name='contenido'
+                        value={contenido}
                         onChange={handleChange}
                     />
                 </div>

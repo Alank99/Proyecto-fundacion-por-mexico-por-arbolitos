@@ -21,7 +21,7 @@ async function connectDB(){
 
 async function log(sujeto, accion, objeto){
     toLog={}
-    toLog["timestamp"]=new Date();
+    toLog["timestamp"]=new Date().toLocaleString();
     toLog["sujeto"]=sujeto;
     toLog["accion"]=accion;
     toLog["objeto"]=objeto;
@@ -272,39 +272,56 @@ app.delete("/tickets/:id", async (request, response)=>{
 })
 
 //crear comentario
-app.put("/comentario/:id", async (request, response)=>{
+app.post("/comentarios/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let addValue=request.body
-        addValue.comentario = ""
-        addValue["id"]=Number(request.params.id);
-        let data=await db.collection("Tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
-        if(data.id === verifiedToken.id || authData.region === data.region || authData.nivel === "ejecutivo" ){
-            response.json(data[0]);
-        }
-        else{
-            response.sendStatus(401);
-        }
-    }catch{
-        response.sendStatus(401);
-    }
-})
-
-//envia comentarios
-app.get("/tickets/:id/comentarios", async (request, response)=>{
-    try{
-        let token=request.get("Authentication");
-        let verifiedToken = await jwt.verify(token, "secretKey");
-        let parametersFind={"id_tik": Number(request.params.id)}
-        let data=await db.collection('Comentarios').find(parametersFind).project({_id:0}).toArray();
-        log(verifiedToken.id, "ver objeto", request.params.id)
-        //console.log("se ve el objeto")
+        let addValue=request.body
+        let data=await db.collection('Comentarios').find({}).toArray();
+        let id_com=data.length+1;
+        //console.log(request.params);
+        addValue["id"]=id_com;
+        addValue["id_tik"]=Number(request.params.id);
+        addValue["id_cor"]=verifiedToken.id;
+        addValue["fecha"] = new Date().toLocaleString();
+        data=await db.collection('Comentarios').insertOne(addValue);
         response.json(data);
     }catch{
         response.sendStatus(401);
     }
 })
+
+//Mostrar comentarios
+app.get("/comentarios", async (request, response) => {
+    try {
+        let token = request.get("Authentication");
+        if (!token) {
+            response.sendStatus(401);
+            return;
+        }
+        let verifiedToken = await jwt.verify(token, "secretKey");
+        //console.log(verifiedToken.id);
+        let authData = await db.collection("Usuarios").findOne({ "id": verifiedToken.id });
+        if (!authData || !authData.nivel) {
+            response.sendStatus(401);
+            return;
+        }
+        let parametersFind = {"id_tik": Number(request.query.id_tik)};
+        let sortBy = request.query._sort;
+        let sortOrder = request.query._order == "ASC" ? 1 : -1;
+        let start = Number(request.query._start);
+        let end = Number(request.query._end);
+        let sorter = {};
+        sorter[sortBy] = sortOrder;
+        let data = await db.collection("Comentarios").find(parametersFind).sort(sorter).project({ _id: 0 }).toArray();
+        response.set("Access-Control-Expose-Headers", "X-Total-Count");
+        response.set("X-Total-Count", data.length);
+        data = data.slice(start, end);
+        response.json(data);
+    } catch {
+        response.sendStatus(401);
+    }
+});
 
 module.exports = {app, connectDB};

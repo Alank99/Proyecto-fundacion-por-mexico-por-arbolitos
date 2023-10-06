@@ -1,7 +1,11 @@
 import React, {useState} from "react";
+import {useRefresh, useNotify, useRedirect} from 'react-admin';
 import host from './const.js'
 
 const Registrarse = () =>{
+    const notify = useNotify();
+    const refresh = useRefresh();
+    const redirect = useRedirect();
 
     const [datos, setDatos]=useState({
         username: "",
@@ -30,6 +34,9 @@ const Registrarse = () =>{
             if (response.status < 200 || response.status >= 300) {
                 throw new Error(response.statusText);
             }
+            notify("Usuario ha sido creado");
+            redirect("/login");
+            refresh();
             
         } catch {
             throw new Error('No se pudo registrar el usuario');

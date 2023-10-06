@@ -1,6 +1,10 @@
-import { Datagrid, List, TextField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, SimpleShowLayout, Show } from 'react-admin';
+import { Datagrid, List, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId } from 'react-admin';
 import {useState,useEffect} from 'react';
+//import {Link} from 'react-router-dom';
 import {categorias, subcategoria, prioridad,status} from './formato_ticket';
+
+import NuevoComentario from "./nuevoComentario.js";
+//import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 
 export const TicketList = () => (
     <List>
@@ -10,29 +14,51 @@ export const TicketList = () => (
             <TextField source="categoria" label="Categoría"/>
             <TextField source="prioridad"/>
             <TextField source="region" label="Región"/>
-            <TextField source="fecha"/>
+            <DateField source="fecha"/>
             <TextField source="status" label="Estado del ticket"/>
             <EditButton/>
         </Datagrid>
     </List>
 );
 
-export const TicketShow = () => (
-  <Show>
-      <SimpleShowLayout>
-          <TextField source="id" label="ID" />
-          <TextField source="id_cor" label="Coordinador" />
-          <TextField source="prioridad" label="Prioridad" />
-          <TextField source="categoria" label="Categoría" />
-          <TextField source="subcategoria" label="Subcategoría" />
-          <TextField source="descripcion" label="Descripción" />
-          <TextField source="aula" label="Aula" />
-          <TextField source="status" label="Estado" />
-          <TextField source="fecha" label="Fecha" />
-          <TextField source="region" label="Región" />
-      </SimpleShowLayout>
-  </Show>
-);
+export const TicketShow = props => {
+  const recordId = useGetRecordId();
+
+  return (
+    <Show {...props}>
+        <TabbedShowLayout>
+          <Tab label="Información">
+            <TextField source="id" label="ID" />
+            <ReferenceField source="id_cor" reference="usuarios" label='Usuario' link="show" />
+            <TextField source="prioridad" label="Prioridad" />
+            <TextField source="categoria" label="Categoría" />
+            <TextField source="subcategoria" label="Subcategoría" />
+            <TextField source="descripcion" label="Descripción" />
+            <TextField source="aula" label="Aula" />
+            <TextField source="status" label="Estado" />
+            <DateField source="fecha" label="Fecha" />
+            <TextField source="region" label="Región" />
+          </Tab>
+          <Tab label="Comentarios">
+            <ReferenceManyField
+            addLabel={false}
+            reference="comentarios"
+            target='id_tik'
+            sort={{ field: "fecha", order: "DESC" }}
+            >
+              <Datagrid>
+                <DateField source="fecha" />
+                <TextField source="contenido" />
+                <ReferenceField source="id_cor" reference="usuarios" label='Usuario' link="show" />
+                <EditButton />
+              </Datagrid>
+            </ReferenceManyField>
+            <NuevoComentario id_tik={recordId}/>
+          </Tab>
+        </TabbedShowLayout>
+    </Show>
+  );
+};
 
 export const TicketEdit = () => (
   <Edit>
@@ -45,7 +71,7 @@ export const TicketEdit = () => (
       <TextField source="descripcion" label="Descripción" />
       <TextField source="aula" label="Aula" />
       <SelectInput source="status" label="Estado" choices={status} />
-      <TextField source="fecha" label="Fecha" />
+      <DateField source="fecha" label="Fecha" />
       <TextField source="region" label="Región" />
     </SimpleForm>
   </Edit>
