@@ -1,9 +1,6 @@
-import { Datagrid, List, TextField, Edit, SimpleForm, TextInput, Link ,Create,SelectInput, EditButton, SimpleShowLayout, Show, useGetList, useGetOne } from 'react-admin';
+import { Datagrid, List, TextField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, SimpleShowLayout, Show } from 'react-admin';
 import {useState,useEffect} from 'react';
 import {categorias, subcategoria, prioridad,status} from './formato_ticket';
-
-import {useParams,useHistory} from 'react-router-dom';
-
 
 export const TicketList = () => (
     <List>
@@ -20,16 +17,8 @@ export const TicketList = () => (
     </List>
 );
 
-export const TicketShow = (props) => {
-  const { id } = useParams();
-  const history = useHistory(); // Obtiene el objeto history
-
-  const redirectToComentariosCreate = () => {
-      history.push(`/Comentarioscreate?id_tik=${id}`); // Redirige a la página de creación de comentarios
-  };
-
-  return (
-      <Show {...props}>
+export const TicketShow = () => (
+  <Show>
           <SimpleShowLayout>
               <TextField source="id" label="ID" />
               <TextField source="id_cor" label="Coordinador" />
@@ -41,13 +30,9 @@ export const TicketShow = (props) => {
               <TextField source="status" label="Estado" />
               <TextField source="fecha" label="Fecha" />
               <TextField source="region" label="Región" />
-              <Button onClick={redirectToComentariosCreate}>
-                  Añadir comentario
-              </Button>
           </SimpleShowLayout>
       </Show>
-  );
-};
+);
 
 export const TicketEdit = () => (
   <Edit>
@@ -65,8 +50,6 @@ export const TicketEdit = () => (
     </SimpleForm>
   </Edit>
 );
-
-
 
 export const TicketCreate = () => {
   const [categoriaSec, setCategoriasSec] = useState("");
