@@ -1,11 +1,42 @@
 html, body {
 
-    padding: 0;
+    padding: 5px;
     
     margin: 0;
-    
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+
+button {
+    cursor: pointer;
+    color: #ffffff;
+    background-color: #426fa6;
+    padding: 5px;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #5f91ce;
+}
+
+.button-red {
+    cursor: pointer;
+    background-color: #800000;
+}
+
+.button-red:hover {
+    background-color: #e53434;
+}
+
+.custom-input{
+    padding: 5px;
+    margin: 5px;
+}
+
+.custom-input::placeholder{
+    color: black;
 }
 
 textarea {
     width: 100%;
 }
+

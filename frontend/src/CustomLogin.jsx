@@ -1,12 +1,12 @@
 // CustomLogin.js
-import React, { useState, useContext } from 'react';
-import { AuthContext, useLogin} from 'react-admin';
+import React, { useState, useContext } from "react";
+import { AuthContext, useLogin } from "react-admin";
 
 export const CustomLogin = () => {
-  const { buttonColor } = useContext(AuthContext); 
+  const { buttonColor } = useContext(AuthContext);
   const login = useLogin();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = () => {
     login({ username, password });
@@ -20,16 +20,18 @@ export const CustomLogin = () => {
         placeholder="Usuario"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+
+        className="custom-input"
       />
       <input
         type="password"
         placeholder="Contraseña"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+
+        className="custom-input"
       />
-      <button style={{ backgroundColor: buttonColor, color: 'white' }} onClick={handleLogin}>
-        Iniciar sesión
-      </button>
+      <button onClick={handleLogin}>Iniciar sesión</button>
     </div>
   );
 };
