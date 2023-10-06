@@ -30,7 +30,7 @@ async function log(sujeto, accion, objeto){
 
 app.post("/registrarse", async(request, response)=>{
     let parametersFind = await db.collection("Usuarios").find({}).toArray();
-    let id_cor = parametersFind.length+1 ;
+    let id = parametersFind.length+1 ;
     let user = request.body.username;
     let pass = request.body.password;
     let fname = request.body.fullName;
@@ -43,7 +43,7 @@ app.post("/registrarse", async(request, response)=>{
         try{
             bcrypt.genSalt(10, (error, salt)=>{
                 bcrypt.hash(pass, salt, async(error, hash)=>{
-                    let usuarioAgregar={"id_cor":id_cor,"usuario": user, "password": hash, "fullName": fname,"nivel": nivel, "region":region};
+                    let usuarioAgregar={"id":id,"usuario": user, "password": hash, "fullName": fname,"nivel": nivel, "region":region};
                     data= await db.collection("Usuarios").insertOne(usuarioAgregar);
                     response.sendStatus(201);
                 })
@@ -65,13 +65,82 @@ app.post("/login", async(request, response)=>{
     }else{
         bcrypt.compare(pass, data.password, (error, result)=>{
             if(result){
-                let token=jwt.sign({ id_cor: data.id_cor, usuario: data.usuario , nivel:data.nivel ,region:data.region}, "secretKey", {expiresIn: 600});
+                let token=jwt.sign({ id: data.id, usuario: data.usuario , nivel:data.nivel ,region:data.region}, "secretKey", {expiresIn: 600});
                 log(user, "login", "");
-                response.json({"token": token,"id_cor": data.id_cor, nivel:data.nivel ,region:data.region})
+                response.json({"token": token,"id": data.id, nivel:data.nivel ,region:data.region})
             }else{
                 response.sendStatus(401)
             }
         })
+    }
+})
+
+app.get("/usuarios", async (request, response) => {
+    try {
+        let token = request.get("Authentication");
+        if (!token) {
+            response.sendStatus(401);
+            return;
+        }
+        let verifiedToken = await jwt.verify(token, "secretKey");
+        //console.log(verifiedToken.id);
+        let authData = await db.collection("Usuarios").findOne({ "id": verifiedToken.id });
+        if (!authData || !authData.nivel) {
+            response.sendStatus(401);
+            return;
+        }
+        let parametersFind = {};
+        if (authData.nivel === "local") {
+            parametersFind["id"] = authData.id;
+        } else if (authData.nivel === "nacional") {
+            parametersFind["region"] = authData.region;
+        }
+        if ("_sort" in request.query) {
+            let sortBy = request.query._sort;
+            let sortOrder = request.query._order == "ASC" ? 1 : -1;
+            let start = Number(request.query._start);
+            let end = Number(request.query._end);
+            let sorter = {};
+            sorter[sortBy] = sortOrder;
+            let data = await db.collection("Usuarios").find(parametersFind).sort(sorter).project({ _id: 0 }).toArray();
+            response.set("Access-Control-Expose-Headers", "X-Total-Count");
+            response.set("X-Total-Count", data.length);
+            data = data.slice(start, end);
+            response.json(data);
+        } else if ("id" in request.query) {
+            let data = [];
+            for (let index = 0; index < request.query.id.length; index++) {
+                let dataObtain = await db.collection("Usuarios").find({ id: Number(request.query.id[index]) }).project({ _id: 0 }).toArray();
+                data = await data.concat(dataObtain);
+            }
+            response.json(data);
+        } else {
+            let data = [];
+            data = await db.collection("Usuarios").find(request.query).project({ _id: 0 }).toArray();
+            response.set("Access-Control-Expose-Headers", "X-Total-Count");
+            response.set("X-Total-Count", data.length);
+            response.json(data);
+        }
+    } catch {
+        response.sendStatus(401);
+    }
+});
+
+app.get("/usuarios/:id", async (request, response)=>{
+    try{
+        let token=request.get("Authentication");
+        let verifiedToken = await jwt.verify(token, "secretKey");
+        let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
+        let parametersFind={"id": Number(request.params.id)}
+        if(authData.nivel=="local"){
+            parametersFind["id"]=verifiedToken.id;
+        }
+        let data=await db.collection('Usuarios').find(parametersFind).project({_id:0}).toArray();
+        log(verifiedToken.id, "ver objeto", request.params.id)
+        //console.log("se ve el objeto")
+        response.json(data[0]);
+    }catch{
+        response.sendStatus(401);
     }
 })
 
@@ -84,15 +153,15 @@ app.get("/tickets", async (request, response) => {
             return;
         }
         let verifiedToken = await jwt.verify(token, "secretKey");
-        //console.log(verifiedToken.id_cor);
-        let authData = await db.collection("Usuarios").findOne({ "id_cor": verifiedToken.id_cor });
+        //console.log(verifiedToken.id);
+        let authData = await db.collection("Usuarios").findOne({ "id": verifiedToken.id });
         if (!authData || !authData.nivel) {
             response.sendStatus(401);
             return;
         }
         let parametersFind = {};
         if (authData.nivel === "local") {
-            parametersFind["id_cor"] = authData.id_cor;
+            parametersFind["id"] = authData.id;
         } else if (authData.nivel === "nacional") {
             parametersFind["region"] = authData.region;
         }
@@ -127,20 +196,18 @@ app.get("/tickets", async (request, response) => {
     }
 });
 
-
-
 //getOne
 app.get("/tickets/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
+        let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let parametersFind={"id": Number(request.params.id)}
         if(authData.nivel=="local"){
-            parametersFind["id_cor"]=verifiedToken.id_cor;
+            parametersFind["id"]=verifiedToken.id;
         }
         let data=await db.collection('Tickets').find(parametersFind).project({_id:0}).toArray();
-        log(verifiedToken.id_cor, "ver objeto", request.params.id)
+        log(verifiedToken.id, "ver objeto", request.params.id)
         //console.log("se ve el objeto")
         response.json(data[0]);
     }catch{
@@ -148,18 +215,17 @@ app.get("/tickets/:id", async (request, response)=>{
     }
 })
 
-
 //create
 app.post("/tickets", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
+        let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let addValue=request.body
         let data=await db.collection('Tickets').find({}).toArray();
         let id_tik=data.length+1;
         addValue["id"]=id_tik;
-        addValue["id_cor"]=verifiedToken.id_cor;
+        addValue["id_cor"]=verifiedToken.id;
         addValue["usuario"]=authData.usuario;
         addValue["status"]="Abierto";
         addValue["fecha"] = new Date().toLocaleString();
@@ -181,8 +247,8 @@ app.put("/tickets/:id", async (request, response)=>{
         addValue["id"]=Number(request.params.id);
         let data=await db.collection("Tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
         data=await db.collection('Tickets').find({"id": Number(request.params.id)}).project({_id:0, id:1, nombre:1, materia:1}).toArray();
-        let authData=await db.collection("Usuarios").findOne({"id_cor": verifiedToken.id_cor})
-        if(data.id_cor === verifiedToken.id_cor || authData.region === data.region || authData.nivel === "ejecutivo" ){
+        let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
+        if(data.id === verifiedToken.id || authData.region === data.region || authData.nivel === "ejecutivo" ){
             response.json(data[0]);
         }
         else{
@@ -206,24 +272,25 @@ app.delete("/tickets/:id", async (request, response)=>{
 })
 
 //crear comentario
-app.post("/comentarios", async (request, response)=>{
+app.put("/comentario/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
         let addValue=request.body
-        let data=await db.collection('Comentarios').find({}).toArray();
-        let id=data.length+1;
-        addValue["id"]=id;
-        addValue["id_cor"]=verifiedToken.id_cor;
-        addValue["fecha"] = new Date().toLocaleString();
-        data=await db.collection('Tickets').insertOne(addValue);
-        //console.log(addValue)
-        response.json(data);
+        addValue.comentario = ""
+        addValue["id"]=Number(request.params.id);
+        let data=await db.collection("Tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
+        let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
+        if(data.id === verifiedToken.id || authData.region === data.region || authData.nivel === "ejecutivo" ){
+            response.json(data[0]);
+        }
+        else{
+            response.sendStatus(401);
+        }
     }catch{
         response.sendStatus(401);
     }
-}) 
-
+})
 
 //envia comentarios
 app.get("/tickets/:id/comentarios", async (request, response)=>{
@@ -232,7 +299,7 @@ app.get("/tickets/:id/comentarios", async (request, response)=>{
         let verifiedToken = await jwt.verify(token, "secretKey");
         let parametersFind={"id_tik": Number(request.params.id)}
         let data=await db.collection('Comentarios').find(parametersFind).project({_id:0}).toArray();
-        log(verifiedToken.id_cor, "ver objeto", request.params.id)
+        log(verifiedToken.id, "ver objeto", request.params.id)
         //console.log("se ve el objeto")
         response.json(data);
     }catch{

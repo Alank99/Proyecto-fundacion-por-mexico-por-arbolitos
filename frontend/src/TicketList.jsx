@@ -1,4 +1,4 @@
-import { Datagrid, List, TextField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, SimpleShowLayout, Show } from 'react-admin';
+import { Datagrid, List, TextField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, SimpleShowLayout, Show } from 'react-admin';
 import {useState,useEffect} from 'react';
 import {categorias, subcategoria, prioridad,status} from './formato_ticket';
 
@@ -6,12 +6,12 @@ export const TicketList = () => (
     <List>
         <Datagrid rowClick="show">
             <TextField source="id" />
-            <TextField source="id_cor" label="coordinador"/>
-            <TextField source="categoria"/>
+            <ReferenceField source="id_cor" reference="usuarios" label='Usuario' link="show" />
+            <TextField source="categoria" label="Categoría"/>
             <TextField source="prioridad"/>
-            <TextField source="region"/>
+            <TextField source="region" label="Región"/>
             <TextField source="fecha"/>
-            <TextField source="status"/>
+            <TextField source="status" label="Estado del ticket"/>
             <EditButton/>
         </Datagrid>
     </List>
@@ -19,19 +19,19 @@ export const TicketList = () => (
 
 export const TicketShow = () => (
   <Show>
-          <SimpleShowLayout>
-              <TextField source="id" label="ID" />
-              <TextField source="id_cor" label="Coordinador" />
-              <TextField source="prioridad" label="Prioridad" />
-              <TextField source="categoria" label="Categoría" />
-              <TextField source="subcategoria" label="Subcategoría" />
-              <TextField source="descripcion" label="Descripción" />
-              <TextField source="aula" label="Aula" />
-              <TextField source="status" label="Estado" />
-              <TextField source="fecha" label="Fecha" />
-              <TextField source="region" label="Región" />
-          </SimpleShowLayout>
-      </Show>
+      <SimpleShowLayout>
+          <TextField source="id" label="ID" />
+          <TextField source="id_cor" label="Coordinador" />
+          <TextField source="prioridad" label="Prioridad" />
+          <TextField source="categoria" label="Categoría" />
+          <TextField source="subcategoria" label="Subcategoría" />
+          <TextField source="descripcion" label="Descripción" />
+          <TextField source="aula" label="Aula" />
+          <TextField source="status" label="Estado" />
+          <TextField source="fecha" label="Fecha" />
+          <TextField source="region" label="Región" />
+      </SimpleShowLayout>
+  </Show>
 );
 
 export const TicketEdit = () => (
