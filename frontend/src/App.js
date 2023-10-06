@@ -13,8 +13,9 @@ import { Dashboard } from './Dashboard';
 
 const App = () =>{
   return(
-      <Admin dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18nProvider} layout={MyLayout}  loginPage = {CustomLogin} dashboard={Dashboard}>
-        <Resource name="tickets" list={TicketList} edit={TicketEdit} create={TicketCreate} show={ShowGuesser}/>
+      <Admin dataProvider={dataProvider} authProvider={authProvider}  i18nProvider={i18nProvider} layout={MyLayout}>
+        <Resource name="tickets" list={TicketList} show={TicketShow} edit={TicketEdit} create={TicketCreate} />
+        <Resource name="comentarios" list={ComentariosList} create={Comentarioscreate} />
         <CustomRoutes>
           <Route path="/registrarse"  element={<Registrarse />}/>
         </CustomRoutes>
