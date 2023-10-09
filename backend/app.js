@@ -128,12 +128,16 @@ app.get("/usuarios", async (request, response) => {
 
 app.get("/usuarios/:id", async (request, response)=>{
     try{
-        let token=request.get("Authentication");
+        let token = request.get("Authentication");
+        if (!token) {
+            response.sendStatus(401);
+            return;
+        }
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let parametersFind={"id": Number(request.params.id)}
         if(authData.nivel=="local"){
-            parametersFind["id"]=verifiedToken.id;
+            throw "Usuario no autorizado";
         }
         let data=await db.collection('Usuarios').find(parametersFind).project({_id:0}).toArray();
         log(verifiedToken.id, "ver objeto", request.params.id)

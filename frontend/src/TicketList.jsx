@@ -1,4 +1,4 @@
-import { Datagrid, List, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId } from 'react-admin';
+import { Datagrid, List, useUnique, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId } from 'react-admin';
 import {useState,useEffect} from 'react';
 
 //import {Link} from 'react-router-dom';
@@ -86,6 +86,8 @@ export const TicketCreate = () => {
   const [categoriaSec, setCategoriasSec] = useState("");
   const [subcategoriaSec, setSubcategoriasSec] = useState([]);
   const [showSubcategoria, setShowSubcategoria] = useState(false);
+  const [hasFolio, setHasFolio] = useState(false); 
+  const unique = useUnique();
 
   useEffect(() => {
     if (categoriaSec) {
@@ -120,6 +122,18 @@ export const TicketCreate = () => {
             source="subcategoria"
             choices={[subcategoriaDefaultOption, ...subcategoriaSec.map((subcat) => ({ id: subcat.id, name: subcat.name }))]}
           />
+        )}
+        <div>
+          <label>¿Tiene número de folio?</label>
+          <input
+            type="checkbox"
+            checked={hasFolio}
+            onChange={(e) => setHasFolio(e.target.checked)}
+          />
+        </div>
+
+        {hasFolio && (
+          <TextInput source="Numero de folio" validate={unique()} />
         )}
         <TextInput source="descripcion" />
         <TextInput source="aula" />
