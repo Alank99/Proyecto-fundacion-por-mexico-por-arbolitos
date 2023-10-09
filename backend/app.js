@@ -290,7 +290,8 @@ app.get("/ticketsRvsno", async (request, response)=>{
             const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "region": authData.region}).toArray();
             const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "region": authData.region}).toArray();
             response.json([ticketsr.length, ticketsn.length]);
-    }
+        }else 
+            throw "error no autorizado";
 
 
     }catch{
