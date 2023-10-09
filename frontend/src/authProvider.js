@@ -46,7 +46,11 @@ const authProvider = {
             return Promise.reject()
         }
     },
-    getPermissions: ()=>{return Promise.resolve()},
+    getPermissions: ()=>{
+        const role = JSON.parse(localStorage.getItem("identity")).nivel;
+        console.log(role)
+        return role ? Promise.resolve(role) : Promise.reject();
+    }
 };
 
 export default authProvider;
