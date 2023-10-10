@@ -1,25 +1,30 @@
-import { Datagrid, List, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId } from 'react-admin';
+import { Datagrid, List, useUnique, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId } from 'react-admin';
 import {useState,useEffect} from 'react';
+
 //import {Link} from 'react-router-dom';
 import {categorias, subcategoria, prioridad,status} from './formato_ticket';
 
 import NuevoComentario from "./nuevoComentario.js";
 //import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 
-export const TicketList = () => (
-    <List>
-        <Datagrid rowClick="show">
-            <TextField source="id" />
-            <ReferenceField source="id_cor" reference="usuarios" label='Usuario' link="show" />
-            <TextField source="categoria" label="Categoría"/>
-            <TextField source="prioridad"/>
-            <TextField source="region" label="Región"/>
-            <DateField source="fecha"/>
-            <TextField source="status" label="Estado del ticket"/>
-            <EditButton/>
-        </Datagrid>
+export const TicketList = () => {
+
+  return (
+    <List >
+      <Datagrid rowClick="show">
+        <TextField source="id" />
+        <ReferenceField source="id_cor" reference="usuarios" label="Usuario" link="show" />
+        <TextField source="categoria" label="Categoría" />
+        <TextField source="prioridad" />
+        <TextField source="region" label="Región" />
+        <DateField source="fechaCreacion" label="Fecha de creación" />
+        <TextField source="status" label="Estado del ticket" />
+        <EditButton />
+
+      </Datagrid>
     </List>
-);
+  );
+};
 
 export const TicketShow = props => {
   const recordId = useGetRecordId();
@@ -36,7 +41,7 @@ export const TicketShow = props => {
             <TextField source="descripcion" label="Descripción" />
             <TextField source="aula" label="Aula" />
             <TextField source="status" label="Estado" />
-            <DateField source="fecha" label="Fecha" />
+            <DateField source="fechaCreacion" label="Fecha de creación" />
             <TextField source="region" label="Región" />
           </Tab>
           <Tab label="Comentarios">
@@ -81,6 +86,8 @@ export const TicketCreate = () => {
   const [categoriaSec, setCategoriasSec] = useState("");
   const [subcategoriaSec, setSubcategoriasSec] = useState([]);
   const [showSubcategoria, setShowSubcategoria] = useState(false);
+  const [hasFolio, setHasFolio] = useState(false); 
+  const unique = useUnique();
 
   useEffect(() => {
     if (categoriaSec) {
@@ -115,6 +122,18 @@ export const TicketCreate = () => {
             source="subcategoria"
             choices={[subcategoriaDefaultOption, ...subcategoriaSec.map((subcat) => ({ id: subcat.id, name: subcat.name }))]}
           />
+        )}
+        <div>
+          <label>¿Tiene número de folio?</label>
+          <input
+            type="checkbox"
+            checked={hasFolio}
+            onChange={(e) => setHasFolio(e.target.checked)}
+          />
+        </div>
+
+        {hasFolio && (
+          <TextInput source="Numero de folio" validate={unique()} />
         )}
         <TextInput source="descripcion" />
         <TextInput source="aula" />

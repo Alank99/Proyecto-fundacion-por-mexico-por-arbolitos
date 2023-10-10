@@ -64,32 +64,50 @@ export const subcategoria = [
 ];
 
 export const prioridad = [
-    { id: 'baja', name: 'Baja' },
-    { id: 'media', name: 'Media' },
-    { id: 'alta', name: 'Alta' },
+    { id: 'Baja', name: 'Baja' },
+    { id: 'Media', name: 'Media' },
+    { id: 'Alta', name: 'Alta' },
 ];
 
 export const region = [
-    {id:"cdmx", name:"CDMX"},
+    {id:"CDMX", name:"CDMX"},
+    {id:"Aguascalientes", name:"Aguascalientes"},
+    {id:"Baja California", name:"Baja California"},
+    {id:"Baja California Sur", name:"Baja California Sur"},
+    {id:"Campeche", name:"Campeche"},
+    {id:"Chiapas", name:"Chiapas"},
+    {id:"Chihuahua", name:"Chihuahua"},
+    {id:"Coahuila", name:"Coahuila"},
+    {id:"Colima", name:"Colima"},
+    {id:"Durango", name:"Durango"},
     {id:"Estado de México", name:"Estado de México"},
+    {id:"Guanajuato", name:"Guanajuato"},
+    {id:"Guerrero", name:"Guerrero"},
+    {id:"Hidalgo", name:"Hidalgo"},
+    {id:"Jalisco", name:"Jalisco"},
+    {id:"Michoacán", name:"Michoacán"},
     {id:"Morelos", name:"Morelos"},
+    {id:"Nayarit", name:"Nayarit"},
+    {id:"Nuevo León", name:"Nuevo León"},
+    {id:"Oaxaca", name:"Oaxaca"},
     {id:"Puebla", name:"Puebla"},
     {id:"Querétaro", name:"Querétaro"},
-    {id:"Hidalgo", name:"Hidalgo"},
-    {id:"Tlaxcala", name:"Tlaxcala"},
-    {id:"Guerrero", name:"Guerrero"},
-    {id:"Oaxaca", name:"Oaxaca"},
-    {id:"Veracruz", name:"Veracruz"},
-    {id:"Tabasco", name:"Tabasco"},
-    {id:"Chiapas", name:"Chiapas"},
-    {id:"Campeche", name:"Campeche"},
-    {id:"Yucatán", name:"Yucatán"},
     {id:"Quintana Roo", name:"Quintana Roo"},
+    {id:"San Luis Potosí", name:"San Luis Potosí"},
+    {id:"Sinaloa", name:"Sinaloa"},
+    {id:"Sonora", name:"Sonora"},
+    {id:"Tabasco", name:"Tabasco"},
+    {id:"Tamaulipas", name:"Tamaulipas"},
+    {id:"Tlaxcala", name:"Tlaxcala"},
+    {id:"Veracruz", name:"Veracruz"},
+    {id:"Yucatán", name:"Yucatán"},
+    {id:"Zacatecas", name:"Zacatecas"}
 ];
 
+
 export const status = [
-    {id:"pendiente", name:"Pendiente"},
-    {id:"resuleto", name:"Resuelto"},
+    {id:"Pendiente", name:"Pendiente"},
+    {id:"Resuelto", name:"Resuelto"},
 ];
 
 export const nivel = [
