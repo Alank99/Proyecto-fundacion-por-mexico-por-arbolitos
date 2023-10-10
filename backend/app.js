@@ -136,7 +136,7 @@ app.get("/usuarios/:id", async (request, response)=>{
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let parametersFind={"id": Number(request.params.id)}
-        if(authData.nivel=="local"){
+        if(authData.nivel==="local"){
             throw "Usuario no autorizado";
         }
         let data=await db.collection('Usuarios').find(parametersFind).project({_id:0}).toArray();
@@ -223,6 +223,10 @@ app.get("/tickets/:id", async (request, response)=>{
 app.post("/tickets", async (request, response)=>{
     try{
         let token=request.get("Authentication");
+        if (!token) {
+            response.sendStatus(401);
+            return;
+        }
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let addValue=request.body
@@ -258,7 +262,7 @@ app.put("/tickets/:id", async (request, response)=>{
         let data=await db.collection("Tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
         data=await db.collection('Tickets').find({"id": Number(request.params.id)}).project({_id:0, id:1, nombre:1, materia:1}).toArray();
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
-        if(data.id_cor === verifiedToken.id || authData.region === data[0].region || authData.nivel === "ejecutivo" ){
+        if(data.id_cor === verifiedToken.id || authData.nivel === "nacional" && authData.region === data.region || authData.nivel === "ejecutivo" ){
             response.json(data[0]);
         }
         else{
@@ -274,8 +278,14 @@ app.delete("/tickets/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
+        if(!token){
+            response.sendStatus(401);
+            return;
+        }
+        if(verifiedToken.nivel==="ejecutivo"){
         let data=await db.collection('Tickets').deleteOne({"id": Number(request.params.id)});
         response.json(data);
+        }
     }catch{
         response.sendStatus(401);
     }
@@ -285,6 +295,10 @@ app.get("/ticketsRvsno", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
+        if(!token){
+            response.sendStatus(401);
+            return;
+        }
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         if(authData.nivel=="ejecutivo"){
             const ticketsr = await db.collection("Tickets").find({"status": "Resuelto"}).toArray();
@@ -336,25 +350,30 @@ app.get('/ticketsporregion', async (request, response)=>{
     }
 })
 
-
-
-
 //crear comentario
 app.post("/comentarios/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
+        if(!token){
+            response.sendStatus(401);
+            return;
+        }
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let addValue=request.body
         let data=await db.collection('Comentarios').find({}).toArray();
         let id_com=data.length+1;
         //console.log(request.params);
-        addValue["id"]=id_com;
-        addValue["id_tik"]=Number(request.params.id);
-        addValue["id_cor"]=verifiedToken.id;
-        addValue["fecha"] = new Date().toLocaleString();
-        data=await db.collection('Comentarios').insertOne(addValue);
-        response.json(data);
+        let ticket = await db.collection("Tickets").findOne({"id": Number(request.params.id)});
+        if(ticket.id_cor === verifiedToken.id ||authData.region === ticket.region || authData.nivel === "ejecutivo" ){
+            addValue["id"]=id_com;
+            addValue["id_tik"]=Number(request.params.id);
+            addValue["id_cor"]=verifiedToken.id;
+            addValue["fecha"] = new Date().toLocaleString();
+            data=await db.collection('Comentarios').insertOne(addValue);
+            response.json(data);
+        }
+        
     }catch{
         response.sendStatus(401);
     }
@@ -370,12 +389,9 @@ app.get("/comentarios", async (request, response) => {
         }
         let verifiedToken = await jwt.verify(token, "secretKey");
         //console.log(verifiedToken.id);
-        let authData = await db.collection("Usuarios").findOne({ "id": verifiedToken.id });
-        if (!authData || !authData.nivel) {
-            response.sendStatus(401);
-            return;
-        }
+
         let parametersFind = {"id_tik": Number(request.query.id_tik)};
+
         let sortBy = request.query._sort;
         let sortOrder = request.query._order == "ASC" ? 1 : -1;
         let start = Number(request.query._start);
@@ -383,10 +399,13 @@ app.get("/comentarios", async (request, response) => {
         let sorter = {};
         sorter[sortBy] = sortOrder;
         let data = await db.collection("Comentarios").find(parametersFind).sort(sorter).project({ _id: 0 }).toArray();
-        response.set("Access-Control-Expose-Headers", "X-Total-Count");
-        response.set("X-Total-Count", data.length);
-        data = data.slice(start, end);
-        response.json(data);
+        let ticket = await db.collection("Tickets").findOne({"id":data.id_tik});
+        if(ticket.id_cor === verifiedToken.id ||authData.region === ticket.region && authData.nivel === "nacional" || authData.nivel === "ejecutivo" ){
+            response.set("Access-Control-Expose-Headers", "X-Total-Count");
+            response.set("X-Total-Count", data.length);
+            data = data.slice(start, end);
+            response.json(data);
+        }
     } catch {
         response.sendStatus(401);
     }
