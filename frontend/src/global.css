@@ -36,5 +36,17 @@ button:hover {
 
 textarea {
     width: 100%;
+    color: black;
+    opacity: 100%;
+    padding: 2px;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+
+textarea::placeholder
+{
+    color: black;
+    opacity: 100%;
+    padding: 2px;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 }
 
