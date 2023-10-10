@@ -48,7 +48,7 @@ const authProvider = {
     },
     getPermissions: ()=>{
         const role = JSON.parse(localStorage.getItem("identity")).nivel;
-        console.log(role)
+        //console.log(role)
         return role ? Promise.resolve(role) : Promise.reject();
     }
 };

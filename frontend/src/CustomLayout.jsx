@@ -6,6 +6,7 @@ import {
   UserMenu,
   useLogout,
   useTheme,
+  useGetIdentity,
   defaultDarkTheme,
   defaultLightTheme,
 } from "react-admin";
@@ -49,6 +50,7 @@ export const ThemeToggler = () => {
 const MyLogoutButton = forwardRef((props, ref) => {
   const logout = useLogout();
   const handleClick = () => logout();
+
   return (
     <MenuItem
       style={{backgroundColor: "#800000", color: "white" }}
@@ -56,17 +58,27 @@ const MyLogoutButton = forwardRef((props, ref) => {
       ref={ref}
       // It's important to pass the props to allow Material UI to manage the keyboard navigation
       {...props}
-    >
-      <ExitIcon /> Regresar a Inicio
+    > 
+      <ExitIcon /> Salir de la aplicación 
     </MenuItem>
   );
 });
 
-const MyUserMenu = () => (
+const MyUserMenu = () => {
+    const { identity } = useGetIdentity();
+
+    return (
   <UserMenu>
+    <MenuItem>
+    <p> <strong> Inició sesión como: </strong> {identity? identity.usuario : 'usuario desconocido'}. </p>
+    </MenuItem>
+    <MenuItem>
+    <p> <strong> Se encuentra en la región de: </strong> {identity? identity.region : 'región desconocida'}. </p>
+    </MenuItem>
     <MyLogoutButton />
   </UserMenu>
-);  
+    );
+};  
 
 const MyAppBar = () => (
   <AppBar userMenu={<MyUserMenu />}>

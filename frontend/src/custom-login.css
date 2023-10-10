@@ -3,8 +3,8 @@
 /* Estilo para el contenedor principal del formulario */
 .custom-login {
     max-width: 400px;
-    margin-top: 150px;
-    margin-left: 550px;
+    margin-top: 130px;
+    margin-left: 560px;
     padding: 20px;
     background-color: black;
     border: 1px solid #ddd;
@@ -41,4 +41,11 @@
   
   .custom-login button:hover {
     background-color: #0056b3;
+  }
+
+  .custom-logo {
+    display: block;
+    margin: 0 auto;
+    width: 235px;
+    height: 150px;
   }
