@@ -76,7 +76,7 @@ export const TicketEdit = () => (
       <TextField source="descripcion" label="Descripción" />
       <TextField source="aula" label="Aula" />
       <SelectInput source="status" label="Estado" choices={status} />
-      <DateField source="fecha" label="Fecha" />
+      <DateField source="fechaCreacion" label="Fecha" />
       <TextField source="region" label="Región" />
     </SimpleForm>
   </Edit>
