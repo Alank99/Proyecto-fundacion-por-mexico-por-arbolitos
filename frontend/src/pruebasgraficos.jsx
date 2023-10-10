@@ -46,12 +46,12 @@ const ChartComponent = () => {
         label: 'Tickets',
         data: [Resueltos, Pendientes],
         backgroundColor: [
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
+          'rgba(0, 167, 0, 0.7)', //verde
+          'rgba(222, 117, 13, 0.7)', //naranja
         ],
         borderColor: [
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 159, 64, 1)',
+          'rgb(0, 167, 0)', //verde
+          'rgb(222, 117, 13)', //naranja
         ],
         borderWidth: 0.5,
       },

@@ -43,11 +43,11 @@ export const TicketsPorRegion = () => {
           label: 'Total de Tickets',
           data: totalTickets,
           backgroundColor: [
-            'rgba(255, 99, 132, 0.5)',
-            'rgba(54, 162, 235, 0.5)',
-            'rgba(255, 206, 86, 0.5)',
-            'rgba(75, 192, 192, 0.5)',
-            'rgba(153, 102, 255, 0.5)',
+            'rgba(0, 167, 0, 0.7)', //verde
+            'rgba(222, 117, 13, 0.7)', //naranja
+            'rgba(230, 0, 230, 0.7)', //violeta
+            'rgba(171, 105, 38, 0.7)', //cafe
+            'rgba(72, 147, 141, 0.7)', //turquesa
           ],
           borderWidth: 1,
         },
