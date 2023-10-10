@@ -39,6 +39,7 @@ textarea {
     opacity: 100%;
     padding: 2px;
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    color: #888888;
 }
 
 textarea::placeholder
@@ -46,4 +47,5 @@ textarea::placeholder
     opacity: 100%;
     padding: 2px;
     font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    color: #888888;
 }

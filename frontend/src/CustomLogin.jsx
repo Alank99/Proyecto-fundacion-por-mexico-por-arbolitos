@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useLogin } from "react-admin";
 import "./custom-login.css";
+import logo from "./fundacionmx.png";
 
 export const CustomLogin = () => {
   const login = useLogin();
@@ -22,7 +23,9 @@ export const CustomLogin = () => {
 
   return (
     
-    <div className="custom-login"> <h2>"Fundación Por México" le da la bienvenida.</h2>
+    <div className="custom-login"> 
+    <img src={logo} alt="Logo de Fundación Por México" className="custom-logo" />
+    <h2>Le da la bienvenida</h2>
     <input
       type="text"
       placeholder="Usuario"
