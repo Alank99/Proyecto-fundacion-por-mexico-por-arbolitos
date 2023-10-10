@@ -65,7 +65,7 @@ app.post("/login", async(request, response)=>{
     }else{
         bcrypt.compare(pass, data.password, (error, result)=>{
             if(result){
-                let token=jwt.sign({ id: data.id, usuario: data.usuario , nivel:data.nivel ,region:data.region}, "secretKey", {expiresIn: 600});
+                let token=jwt.sign({ id: data.id, usuario: data.usuario , nivel:data.nivel ,region:data.region}, "secretKey", {expiresIn: 3600});
                 log(user, "login", "");
                 response.json({"token": token,"id": data.id, nivel:data.nivel ,region:data.region})
             }else{
@@ -319,7 +319,7 @@ app.get("/ticketsRvsno", async (request, response)=>{
 
 app.get('/ticketsporregion', async (request, response)=>{
     try{
-        console.log("entro")
+        //console.log("entro")
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
@@ -388,10 +388,7 @@ app.get("/comentarios", async (request, response) => {
             return;
         }
         let verifiedToken = await jwt.verify(token, "secretKey");
-        //console.log(verifiedToken.id);
-
         let parametersFind = {"id_tik": Number(request.query.id_tik)};
-
         let sortBy = request.query._sort;
         let sortOrder = request.query._order == "ASC" ? 1 : -1;
         let start = Number(request.query._start);
@@ -399,8 +396,8 @@ app.get("/comentarios", async (request, response) => {
         let sorter = {};
         sorter[sortBy] = sortOrder;
         let data = await db.collection("Comentarios").find(parametersFind).sort(sorter).project({ _id: 0 }).toArray();
-        let ticket = await db.collection("Tickets").findOne({"id":data.id_tik});
-        if(ticket.id_cor === verifiedToken.id ||authData.region === ticket.region && authData.nivel === "nacional" || authData.nivel === "ejecutivo" ){
+        let ticket = await db.collection("Tickets").findOne({"id":Number(request.query.id_tik)});
+        if(ticket.id_cor === verifiedToken.id || (verifiedToken.region === ticket.region && verifiedToken.nivel === "nacional") || verifiedToken.nivel === "ejecutivo" ){
             response.set("Access-Control-Expose-Headers", "X-Total-Count");
             response.set("X-Total-Count", data.length);
             data = data.slice(start, end);
