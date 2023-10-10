@@ -1,4 +1,4 @@
-import { Datagrid, List, useUnique, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId } from 'react-admin';
+import { Datagrid, List, useUnique, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId, SimpleShowLayout } from 'react-admin';
 import {useState,useEffect} from 'react';
 
 //import {Link} from 'react-router-dom';
@@ -33,17 +33,43 @@ export const TicketShow = props => {
     <Show {...props}>
         <TabbedShowLayout>
           <Tab label="Información">
-            <TextField source="id" label="ID" />
-            <ReferenceField source="id_cor" reference="usuarios" label='Usuario' link="show" />
-            <TextField source="prioridad" label="Prioridad" />
-            <TextField source="categoria" label="Categoría" />
-            <TextField source="subcategoria" label="Subcategoría" />
-            <TextField source="descripcion" label="Descripción" />
-            <TextField source="aula" label="Aula" />
-            <TextField source="status" label="Estado" />
-            <DateField source="fechaCreacion" label="Fecha de creación" />
-            <TextField source="region" label="Región" />
+
+            <SimpleShowLayout>
+
+            <div style={{ marginBottom: '10px' }}>
+              <strong>ID:</strong> <TextField source="id" label="ID" />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Usuario:</strong> <ReferenceField source="id_cor" reference="usuarios" label="Usuario" link="show" />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Prioridad:</strong> <TextField source="prioridad" label="Prioridad" />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Categoría:</strong> <TextField source="categoria" label="Categoría" />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Subcategoría:</strong> <TextField source="subcategoria" label="Subcategoría" />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Descripción:</strong> <TextField source="descripcion" label="Descripción" />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Aula:</strong> <TextField source="aula" label="Aula" />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Estado:</strong> <TextField source="status" label="Estado" />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Fecha de creación:</strong> <DateField source="fechaCreacion" label="Fecha de creación" />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Región:</strong> <TextField source="region" label="Región" />
+            </div>
+
+            </SimpleShowLayout>
           </Tab>
+
           <Tab label="Comentarios">
             <ReferenceManyField
             addLabel={false}
