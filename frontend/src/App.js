@@ -15,12 +15,17 @@ import { Dashboard } from './Dashboard';
 const App = () =>{
   return(
       <Admin dataProvider={dataProvider} authProvider={authProvider}  i18nProvider={i18nProvider} layout={MyLayout} loginPage={CustomLogin} dashboard={Dashboard}>
-        <Resource name="usuarios" list={UserList} show={UserShow} recordRepresentation="fullName"/>
-        <Resource name="tickets" list={TicketList} show={TicketShow} edit={TicketEdit} create={TicketCreate} />
-        <Resource name="comentarios" />
-        <CustomRoutes>
-          <Route path="/registrarse"  element={<Registrarse />}/>
-        </CustomRoutes>
+        {permissions => (
+          <>
+            <CustomRoutes>
+              <Route path="/registrarse"  element={<Registrarse />}/>
+            </CustomRoutes>
+            <Resource name="tickets" list={TicketList} show={TicketShow} edit={permissions=== 'ejecutivo' ?TicketEdit : null} create={TicketCreate} />
+            {permissions === 'ejecutivo' ?
+              <Resource name="usuarios" list={UserList} show={UserShow} recordRepresentation="fullName"/>
+              : null}
+          </>
+        )}
       </Admin>
   );
 };
