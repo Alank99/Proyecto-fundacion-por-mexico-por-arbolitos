@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-image: url('ruta-a-tu-imagen-de-fondo.jpg'); /* Reemplaza 'ruta-a-tu-imagen-de-fondo.jpg' con la ruta correcta a tu imagen */
+  /*background-image: url('ruta-a-tu-imagen-de-fondo.jpg'); Reemplaza 'ruta-a-tu-imagen-de-fondo.jpg' con la ruta correcta a tu imagen */
   background-size: cover;
   background-position: center;
 }
