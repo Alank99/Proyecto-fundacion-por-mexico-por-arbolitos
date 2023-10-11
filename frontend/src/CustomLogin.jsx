@@ -3,11 +3,14 @@ import React, { useState } from "react";
 import { useLogin } from "react-admin";
 import "./custom-login.css";
 import logo from "./fundacionmx.png";
+import { useNavigate } from 'react-router-dom';
 
 export const CustomLogin = () => {
   const login = useLogin();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     login({ username, password });
@@ -18,6 +21,16 @@ export const CustomLogin = () => {
   if (e.key === "Enter")
   {
     handleLogin();
+  }
+};
+
+const toggleRegisterView = () => {
+  setIsRegistering(!isRegistering);
+
+  if (!isRegistering) {
+    navigate('/registrarse');
+  } else {
+    navigate('/login');
   }
 };
 
@@ -44,6 +57,7 @@ export const CustomLogin = () => {
       className="custom-input"
     />
     <button onClick={handleLogin}>Iniciar sesión</button>
+    <button onClick={toggleRegisterView}>{isRegistering ? "Volver" : "Registrarse"}</button>
     </div>
   );
 };
