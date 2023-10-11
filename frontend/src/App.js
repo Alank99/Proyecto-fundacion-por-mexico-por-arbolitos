@@ -14,14 +14,14 @@ import { Dashboard } from './Dashboard';
 
 const App = () =>{
   return(
-      <Admin dataProvider={dataProvider} authProvider={authProvider}  i18nProvider={i18nProvider} layout={MyLayout} loginPage={CustomLogin} dashboard={Dashboard}>
+      <Admin dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18nProvider} layout={MyLayout} loginPage={CustomLogin} dashboard={Dashboard}>
         {permissions => (
           <>
             <CustomRoutes>
               <Route path="/registrarse"  element={<Registrarse />}/>
             </CustomRoutes>
             <Resource name="tickets" list={TicketList} show={TicketShow} edit={permissions=== 'ejecutivo' ?TicketEdit : null} create={TicketCreate} />
-            {permissions === 'ejecutivo' ?
+            {permissions === 'ejecutivo' || permissions === 'nacional' ?
               <Resource name="usuarios" list={UserList} show={UserShow} recordRepresentation="fullName"/>
               : null}
           </>

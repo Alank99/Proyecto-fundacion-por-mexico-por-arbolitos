@@ -1,9 +1,11 @@
 import { Tabs, Tab, Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import {useState} from 'react'
-import {ChartComponent, TicketsPorRegion} from './GraficasDashboard.jsx';
+import { usePermissions } from 'react-admin';
+import {ChartComponent, TicketsTop5 ,TicketsPorRegion} from './GraficasDashboard.jsx';
 
 function CustomTabPanel(props) {
+
     const { children, value, index, ...other } = props;
   
     return (
@@ -36,28 +38,41 @@ function CustomTabPanel(props) {
     };
   }
 
-export const Dashboard = () => {
+  export const Dashboard = () => {
     const [value, setValue] = useState(0);
-
+    const { permissions } = usePermissions();
+  
+    const tabs = [
+      { label: 'Tickets Resueltos', component: <ChartComponent /> },
+      { label: 'Top 5 de Regiones con ticket', component: <TicketsTop5 /> },
+      { label: 'Tickets por región', component: <TicketsPorRegion /> },
+    ];
+  
+    // Filtra las pestañas basándose en los permisos del usuario
+    const filteredTabs = permissions === 'ejecutivo' ? tabs : [tabs[0]];
+  
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+      setValue(newValue);
     };
-
+  
     return (
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={value} onChange={handleChange} aria-label="Tablero">
-            <Tab label="Tickets Resueltos" {...a11yProps(0)} />
-            <Tab label="Tickets por región" {...a11yProps(1)} />
-            </Tabs>
+          <Tabs value={value} onChange={handleChange} aria-label="Tablero">
+            {filteredTabs.map((tab, index) => (
+              <Tab key={index} label={tab.label} {...a11yProps(index)} />
+            ))}
+          </Tabs>
         </Box>
-        <CustomTabPanel value={value} index={0}>
-            <ChartComponent />
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-            <TicketsPorRegion/>
-        </CustomTabPanel>
+  
+        {filteredTabs.map((tab, index) => (
+          value === index && (
+            <CustomTabPanel key={index} value={value} index={index}>
+              {tab.component}
+            </CustomTabPanel>
+          )
+        ))}
       </Box>
     );
-}
-
+  };
+  

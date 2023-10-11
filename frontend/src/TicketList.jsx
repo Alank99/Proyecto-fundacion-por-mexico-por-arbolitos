@@ -1,4 +1,4 @@
-import { Datagrid, List, useUnique, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId, SimpleShowLayout } from 'react-admin';
+import { Datagrid, List, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId, SimpleShowLayout } from 'react-admin';
 import {useState,useEffect} from 'react';
 
 //import {Link} from 'react-router-dom';
@@ -66,6 +66,9 @@ export const TicketShow = props => {
             <div style={{ marginBottom: '10px' }}>
               <strong>Región:</strong> <TextField source="region" label="Región" />
             </div>
+            <div style={{ marginBottom: '10px' }}>
+              <strong>Número de folio:</strong> <TextField source="Numerodefolio" label="Número de folio" />
+            </div>
 
             </SimpleShowLayout>
           </Tab>
@@ -113,7 +116,6 @@ export const TicketCreate = () => {
   const [subcategoriaSec, setSubcategoriasSec] = useState([]);
   const [showSubcategoria, setShowSubcategoria] = useState(false);
   const [hasFolio, setHasFolio] = useState(false); 
-  const unique = useUnique();
 
   useEffect(() => {
     if (categoriaSec) {
@@ -159,7 +161,7 @@ export const TicketCreate = () => {
         </div>
 
         {hasFolio && (
-          <TextInput source="Numero de folio" validate={unique()} />
+          <TextInput source="Numerodefolio"  />
         )}
         <TextInput source="descripcion" />
         <TextInput source="aula" />

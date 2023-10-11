@@ -166,6 +166,7 @@ app.get("/tickets", async (request, response) => {
         let parametersFind = {};
         if (authData.nivel === "local") {
             parametersFind["id"] = authData.id;
+            console.log(parametersFind);
         } else if (authData.nivel === "nacional") {
             parametersFind["region"] = authData.region;
         }
@@ -185,6 +186,7 @@ app.get("/tickets", async (request, response) => {
             let data = [];
             for (let index = 0; index < request.query.id.length; index++) {
                 let dataObtain = await db.collection("Tickets").find({ id: Number(request.query.id[index]) }).project({ _id: 0 }).toArray();
+                console.log(dataObtain);
                 data = await data.concat(dataObtain);
             }
             response.json(data);
@@ -212,7 +214,6 @@ app.get("/tickets/:id", async (request, response)=>{
         }
         let data=await db.collection('Tickets').find(parametersFind).project({_id:0}).toArray();
         log(verifiedToken.id, "ver objeto", request.params.id)
-        //console.log("se ve el objeto")
         response.json(data[0]);
     }catch{
         response.sendStatus(401);
@@ -308,7 +309,12 @@ app.get("/ticketsRvsno", async (request, response)=>{
             const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "region": authData.region}).toArray();
             const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "region": authData.region}).toArray();
             response.json([ticketsr.length, ticketsn.length]);
-        }else 
+        }else if(authData.nivel=="local"){
+            const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "id": authData.id}).toArray();
+            const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "id": authData.id}).toArray();
+            response.json([ticketsr.length, ticketsn.length]);
+        }
+        else 
             throw "error no autorizado";
 
 
@@ -317,7 +323,7 @@ app.get("/ticketsRvsno", async (request, response)=>{
     }
 })
 
-app.get('/ticketsporregion', async (request, response)=>{
+app.get('/ticketstop5', async (request, response)=>{
     try{
         //console.log("entro")
         let token=request.get("Authentication");
@@ -339,8 +345,35 @@ app.get('/ticketsporregion', async (request, response)=>{
                         $limit: 5
                     }
                 ])
-                .toArray();
-            console.log(topTickets);    
+                .toArray();  
+             response.json(topTickets);
+    }else{
+        response.sendStatus(401);
+    }
+    }catch{
+        response.sendStatus(401);
+    }
+})
+
+app.get('/ticketsPorRegion', async (request, response)=>{
+    try{
+        let token=request.get("Authentication");
+        let verifiedToken = await jwt.verify(token, "secretKey");
+        let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
+        if(authData.nivel=="ejecutivo"){
+            const topTickets = await db.collection("Tickets")
+                .aggregate([
+                    { 
+                        $group: {
+                            _id: "$region",
+                            totalTickets: { $sum: 1 } 
+                        }
+                    },
+                    {
+                        $sort: { totalTickets: -1 } 
+                    },
+                ])
+                .toArray();  
              response.json(topTickets);
     }else{
         response.sendStatus(401);
