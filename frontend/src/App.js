@@ -21,9 +21,7 @@ const App = () =>{
               <Route path="/registrarse"  element={<Registrarse />}/>
             </CustomRoutes>
             <Resource name="tickets" list={TicketList} show={TicketShow} edit={permissions=== 'ejecutivo' ?TicketEdit : null} create={TicketCreate} />
-            {permissions === 'ejecutivo' || permissions === 'nacional' ?
-              <Resource name="usuarios" list={UserList} show={UserShow} recordRepresentation="fullName"/>
-              : null}
+            <Resource name="usuarios" list={permissions==='ejecutivo' ? UserList : null} show={UserShow} recordRepresentation="fullName"/>
           </>
         )}
       </Admin>

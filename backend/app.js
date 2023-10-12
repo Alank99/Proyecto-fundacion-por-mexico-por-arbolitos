@@ -136,9 +136,9 @@ app.get("/usuarios/:id", async (request, response)=>{
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let parametersFind={"id": Number(request.params.id)}
-        if(authData.nivel==="local"){
-            throw "Usuario no autorizado";
-        }
+        //if(authData.nivel==="local"){
+        //    throw "Usuario no autorizado";
+        //}
         let data=await db.collection('Usuarios').find(parametersFind).project({_id:0}).toArray();
         log(verifiedToken.id, "ver objeto", request.params.id)
         //console.log("se ve el objeto")
@@ -165,7 +165,7 @@ app.get("/tickets", async (request, response) => {
         }
         let parametersFind = {};
         if (authData.nivel === "local") {
-            parametersFind["id"] = authData.id;
+            parametersFind["id_cor"] = authData.id;
             console.log(parametersFind);
         } else if (authData.nivel === "nacional") {
             parametersFind["region"] = authData.region;
@@ -210,7 +210,7 @@ app.get("/tickets/:id", async (request, response)=>{
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let parametersFind={"id": Number(request.params.id)}
         if(authData.nivel=="local"){
-            parametersFind["id"]=verifiedToken.id;
+            parametersFind["id_cor"]=verifiedToken.id;
         }
         let data=await db.collection('Tickets').find(parametersFind).project({_id:0}).toArray();
         log(verifiedToken.id, "ver objeto", request.params.id)
