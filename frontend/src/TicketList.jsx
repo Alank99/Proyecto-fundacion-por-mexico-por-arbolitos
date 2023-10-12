@@ -10,9 +10,8 @@ import NuevoComentario from "./nuevoComentario.js";
 export const TicketList = () => {
 
   return (
-    <List >
+    <List sort={{field: 'fechaCreacion', order: 'DESC'}}>
       <Datagrid rowClick="show">
-        <TextField source="id" />
         <ReferenceField source="id_cor" reference="usuarios" label="Usuario" link="show" />
         <TextField source="categoria" label="Categoría" />
         <TextField source="prioridad" />
@@ -186,7 +185,7 @@ export const TicketCreate = () => {
         {hasFolio && (
           <TextInput source="Numerodefolio"  />
         )}
-        <TextInput source="descripcion" />
+        <TextInput multiline fullWidth source="descripcion" />
         <TextInput source="aula" />
       </SimpleForm>
     </Create>

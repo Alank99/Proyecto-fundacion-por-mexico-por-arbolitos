@@ -12,10 +12,10 @@ const app=express();
 app.use(cors());
 app.use(bodyParser.json());
 
+//Crea un id random para las diferentes colecciones y revisa que no exita
 async function make_id(type)
 {
     let rand = Math.random() * 100000000000000000;
-    //console.log(Number(rand));
 
     if (await db.collection(type).findOne({"id": rand}))
         return make_id(rand);
@@ -23,6 +23,7 @@ async function make_id(type)
         return rand;
 }
 
+//Se conecta al cliente de mongoDB con el host indicado
 async function connectDB(){
     let client=new MongoClient(`mongodb://${host}:27017/PorMexico`)
     await client.connect();
@@ -30,6 +31,7 @@ async function connectDB(){
     console.log("conectado a la base de datos")
 }
 
+//Crea un log de cada accion ejecutada por el backend
 async function log(sujeto, accion, objeto){
     toLog={}
     toLog["timestamp"]=new Date();
@@ -39,9 +41,8 @@ async function log(sujeto, accion, objeto){
     await db.collection("log").insertOne(toLog);
 }
 
+//Crea un nuevo usuario
 app.post("/usuarios", async(request, response)=>{
-    //let parametersFind = await db.collection("Usuarios").find({}).toArray();
-    
     let id = await make_id("Usuarios") ;
     let user = request.body.username;
     let pass = request.body.password;
@@ -49,25 +50,20 @@ app.post("/usuarios", async(request, response)=>{
     let nivel = request.body.nivel;
     let region = request.body.region;
 
-    //console.log(request.body)
-    let data= await db.collection("Usuarios").findOne({"usuario": user});
-    if(data==null){
-        try{
-            bcrypt.genSalt(10, (error, salt)=>{
-                bcrypt.hash(pass, salt, async(error, hash)=>{
-                    let usuarioAgregar={"id":id,"usuario": user, "password": hash, "fullName": fname,"nivel": nivel, "region":region};
-                    data= await db.collection("Usuarios").insertOne(usuarioAgregar);
-                    response.sendStatus(201);
-                })
+    try{
+        bcrypt.genSalt(10, (error, salt)=>{
+            bcrypt.hash(pass, salt, async(error, hash)=>{
+                let usuarioAgregar={"id":id,"usuario": user, "password": hash, "fullName": fname,"nivel": nivel, "region":region};
+                data= await db.collection("Usuarios").insertOne(usuarioAgregar);
+                response.json(data)
             })
-        }catch{
-            response.sendStatus(401);
-        }
-    }else{
-        response.sendStatus(401)
+        })
+    }catch{
+        response.sendStatus(401);
     }
 })
 
+//Da
 app.post("/login", async(request, response)=>{
     let user=request.body.username;
     let pass=request.body.password;
@@ -95,7 +91,6 @@ app.get("/usuarios", async (request, response) => {
             return;
         }
         let verifiedToken = await jwt.verify(token, "secretKey");
-        //console.log(verifiedToken.id);
         let authData = await db.collection("Usuarios").findOne({ "id": verifiedToken.id });
         if (!authData || !authData.nivel) {
             response.sendStatus(401);
@@ -148,12 +143,9 @@ app.get("/usuarios/:id", async (request, response)=>{
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let parametersFind={"id": Number(request.params.id)}
-        //if(authData.nivel==="local"){
-        //    throw "Usuario no autorizado";
-        //}
+
         let data=await db.collection('Usuarios').find(parametersFind).project({_id:0}).toArray();
         log(verifiedToken.id, "ver objeto", request.params.id)
-        //console.log("se ve el objeto")
         response.json(data[0]);
     }catch{
         response.sendStatus(401);
@@ -169,7 +161,6 @@ app.get("/tickets", async (request, response) => {
             return;
         }
         let verifiedToken = await jwt.verify(token, "secretKey");
-        //console.log(verifiedToken.id);
         let authData = await db.collection("Usuarios").findOne({ "id": verifiedToken.id });
         if (!authData || !authData.nivel) {
             response.sendStatus(401);
@@ -178,12 +169,10 @@ app.get("/tickets", async (request, response) => {
         let parametersFind = {};
         if (authData.nivel === "local") {
             parametersFind["id_cor"] = authData.id;
-            //console.log(parametersFind);
         } else if (authData.nivel === "nacional") {
             parametersFind["region"] = authData.region;
         }
 
-        //console.log(request.query);
         //Tratar con filtros
         if ("status" in request.query){
             parametersFind['status'] = request.query.status;
@@ -210,7 +199,6 @@ app.get("/tickets", async (request, response) => {
             let data = [];
             for (let index = 0; index < request.query.id.length; index++) {
                 let dataObtain = await db.collection("Tickets").find({ id: Number(request.query.id[index]) }).project({ _id: 0 }).toArray();
-                //console.log(dataObtain);
                 data = await data.concat(dataObtain);
             }
             response.json(data);
@@ -255,8 +243,7 @@ app.post("/tickets", async (request, response)=>{
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let addValue=request.body
-        //let data=await db.collection('Tickets').find({}).toArray();
-        //let id_tik=data.length+1;
+
         addValue["id"]= await make_id("Tickets");
         addValue["id_cor"]=verifiedToken.id;
         addValue["usuario"]=authData.usuario;
@@ -265,7 +252,6 @@ app.post("/tickets", async (request, response)=>{
         addValue["fechaCierre"] = "";
         addValue["region"]=authData.region;
         data=await db.collection('Tickets').insertOne(addValue);
-        //console.log(addValue)
         response.json(data);
     }catch{
         response.sendStatus(401);
@@ -307,9 +293,10 @@ app.delete("/tickets/:id", async (request, response)=>{
             response.sendStatus(401);
             return;
         }
-        if(verifiedToken.nivel==="ejecutivo"){
-        let data=await db.collection('Tickets').deleteOne({"id": Number(request.params.id)});
-        response.json(data);
+        if(verifiedToken.nivel==="ejecutivo" || verifiedToken.nivel==="nacional"){
+            let data=await db.collection('Tickets').deleteOne({"id": Number(request.params.id)});
+            await db.collection("Comentarios").deleteMany({"id_tik": Number(request.params.id)})
+            response.json(data);
         }
     }catch{
         response.sendStatus(401);
@@ -354,7 +341,6 @@ app.get('/ticketstop5', async (request, response)=>{
     try{
         let LastWeek = new Date();
         LastWeek.setDate(LastWeek.getDate() - 7);
-        //console.log("entro")
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
@@ -432,9 +418,7 @@ app.post("/comentarios/:id", async (request, response)=>{
         }
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let addValue=request.body
-        //let data=await db.collection('Comentarios').find({}).toArray();
-        //let id_com=data.length+1;
-        //console.log(request.params);
+
         let ticket = await db.collection("Tickets").findOne({"id": Number(request.params.id)});
         if(ticket.id_cor === verifiedToken.id ||authData.region === ticket.region || authData.nivel === "ejecutivo" ){
             addValue["id"]= await make_id("Comentarios");
