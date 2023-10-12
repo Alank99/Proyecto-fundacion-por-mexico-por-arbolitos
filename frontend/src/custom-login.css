@@ -14,8 +14,7 @@
 
 .custom-login {
     max-width: 400px;
-    margin-top: 125px;
-    margin-left: 560px;
+    margin-top: 30px;
     padding: 20px;
     background-color: black;
     border: 1px solid #ddd;
@@ -59,4 +58,18 @@
     margin: 0 auto;
     width: 235px;
     height: 150px;
+  }
+
+  .login-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('cdmx.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 100%;
   }

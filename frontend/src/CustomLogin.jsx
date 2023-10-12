@@ -35,7 +35,7 @@ const toggleRegisterView = () => {
 };
 
   return (
-    
+    <div className="login-page">
     <div className="custom-login"> 
     <img src={logo} alt="Logo de Fundación Por México" className="custom-logo" />
     <h2>Le da la bienvenida</h2>
@@ -58,6 +58,6 @@ const toggleRegisterView = () => {
     />
     <button onClick={handleLogin}>Iniciar sesión</button>
     <button onClick={toggleRegisterView}>{isRegistering ? "Volver" : "Registrarse"}</button>
-    </div>
+    </div></div>
   );
 };
