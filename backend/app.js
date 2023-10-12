@@ -12,6 +12,17 @@ const app=express();
 app.use(cors());
 app.use(bodyParser.json());
 
+async function make_id(type)
+{
+    let rand = Math.random() * 100000000000000000;
+    //console.log(Number(rand));
+
+    if (await db.collection(type).findOne({"id": rand}))
+        return make_id(rand);
+    else
+        return rand;
+}
+
 async function connectDB(){
     let client=new MongoClient(`mongodb://${host}:27017/PorMexico`)
     await client.connect();
@@ -28,9 +39,10 @@ async function log(sujeto, accion, objeto){
     await db.collection("log").insertOne(toLog);
 }
 
-app.post("/registrarse", async(request, response)=>{
-    let parametersFind = await db.collection("Usuarios").find({}).toArray();
-    let id = parametersFind.length+1 ;
+app.post("/usuarios", async(request, response)=>{
+    //let parametersFind = await db.collection("Usuarios").find({}).toArray();
+    
+    let id = await make_id("Usuarios") ;
     let user = request.body.username;
     let pass = request.body.password;
     let fname = request.body.fullName;
@@ -166,12 +178,12 @@ app.get("/tickets", async (request, response) => {
         let parametersFind = {};
         if (authData.nivel === "local") {
             parametersFind["id_cor"] = authData.id;
-            console.log(parametersFind);
+            //console.log(parametersFind);
         } else if (authData.nivel === "nacional") {
             parametersFind["region"] = authData.region;
         }
 
-        console.log(request.query);
+        //console.log(request.query);
         //Tratar con filtros
         if ("status" in request.query){
             parametersFind['status'] = request.query.status;
@@ -198,7 +210,7 @@ app.get("/tickets", async (request, response) => {
             let data = [];
             for (let index = 0; index < request.query.id.length; index++) {
                 let dataObtain = await db.collection("Tickets").find({ id: Number(request.query.id[index]) }).project({ _id: 0 }).toArray();
-                console.log(dataObtain);
+                //console.log(dataObtain);
                 data = await data.concat(dataObtain);
             }
             response.json(data);
@@ -243,9 +255,9 @@ app.post("/tickets", async (request, response)=>{
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let addValue=request.body
-        let data=await db.collection('Tickets').find({}).toArray();
-        let id_tik=data.length+1;
-        addValue["id"]=id_tik;
+        //let data=await db.collection('Tickets').find({}).toArray();
+        //let id_tik=data.length+1;
+        addValue["id"]= await make_id("Tickets");
         addValue["id_cor"]=verifiedToken.id;
         addValue["usuario"]=authData.usuario;
         addValue["status"]="Pendiente";
@@ -420,12 +432,12 @@ app.post("/comentarios/:id", async (request, response)=>{
         }
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let addValue=request.body
-        let data=await db.collection('Comentarios').find({}).toArray();
-        let id_com=data.length+1;
+        //let data=await db.collection('Comentarios').find({}).toArray();
+        //let id_com=data.length+1;
         //console.log(request.params);
         let ticket = await db.collection("Tickets").findOne({"id": Number(request.params.id)});
         if(ticket.id_cor === verifiedToken.id ||authData.region === ticket.region || authData.nivel === "ejecutivo" ){
-            addValue["id"]=id_com;
+            addValue["id"]= await make_id("Comentarios");
             addValue["id_tik"]=Number(request.params.id);
             addValue["id_cor"]=verifiedToken.id;
             addValue["fecha"] = new Date();
