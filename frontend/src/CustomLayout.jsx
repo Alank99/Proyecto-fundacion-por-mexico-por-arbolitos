@@ -73,6 +73,9 @@ const MyUserMenu = () => {
     <p> <strong> Inició sesión como: </strong> {identity? identity.usuario : 'usuario desconocido'}. </p>
     </MenuItem>
     <MenuItem>
+    <p> <strong> Nivel: </strong> {identity? identity.nivel : 'nivel desconocido'}. </p>
+    </MenuItem>
+    <MenuItem>
     <p> <strong> Se encuentra en la región de: </strong> {identity? identity.region : 'región desconocida'}. </p>
     </MenuItem>
     <MyLogoutButton />

@@ -21,7 +21,7 @@ async function connectDB(){
 
 async function log(sujeto, accion, objeto){
     toLog={}
-    toLog["timestamp"]=new Date().toLocaleString();
+    toLog["timestamp"]=new Date();
     toLog["sujeto"]=sujeto;
     toLog["accion"]=accion;
     toLog["objeto"]=objeto;
@@ -67,7 +67,7 @@ app.post("/login", async(request, response)=>{
             if(result){
                 let token=jwt.sign({ id: data.id, usuario: data.usuario , nivel:data.nivel ,region:data.region}, "secretKey", {expiresIn: 3600});
                 log(user, "login", "");
-                response.json({"token": token,"id": data.id, nivel:data.nivel ,region:data.region})
+                response.json({"token": token, id:data.id, nivel:data.nivel , region:data.region})
             }else{
                 response.sendStatus(401)
             }
@@ -170,6 +170,18 @@ app.get("/tickets", async (request, response) => {
         } else if (authData.nivel === "nacional") {
             parametersFind["region"] = authData.region;
         }
+
+        console.log(request.query);
+        //Tratar con filtros
+        if ("status" in request.query){
+            parametersFind['status'] = request.query.status;
+        }
+        if ("fecha" in request.query){
+            let LastWeek = new Date();
+            LastWeek.setDate(LastWeek.getDate() - 7);
+            parametersFind['fechaCreacion'] = {"$lt" : LastWeek};
+        }
+
         if ("_sort" in request.query) {
             let sortBy = request.query._sort;
             let sortOrder = request.query._order == "ASC" ? 1 : -1;
@@ -237,7 +249,7 @@ app.post("/tickets", async (request, response)=>{
         addValue["id_cor"]=verifiedToken.id;
         addValue["usuario"]=authData.usuario;
         addValue["status"]="Pendiente";
-        addValue["fechaCreacion"] = new Date().toLocaleString();
+        addValue["fechaCreacion"] = new Date();
         addValue["fechaCierre"] = "";
         addValue["region"]=authData.region;
         data=await db.collection('Tickets').insertOne(addValue);
@@ -253,18 +265,18 @@ app.put("/tickets/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let addValue=request.body
+
+        let addValue = {status: '', id: ''};
+        addValue["status"] = request.body.status;
         addValue["id"]=Number(request.params.id);
-        let ticket=await db.collection("Tickets").findOne({"id": addValue["id"]});
-        if(ticket.status==="Resuelto" ){
-            addValue["fechaCierre"] = new Date().toLocaleString();
+        if(addValue.status==="Resuelto" ){
+            addValue["fechaCierre"] = new Date();
         }
 
-        let data=await db.collection("Tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
-        data=await db.collection('Tickets').find({"id": Number(request.params.id)}).project({_id:0, id:1, nombre:1, materia:1}).toArray();
+        let data=await db.collection('Tickets').findOne({"id": Number(addValue["id"])});
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         if(data.id_cor === verifiedToken.id || authData.nivel === "nacional" && authData.region === data.region || authData.nivel === "ejecutivo" ){
-            response.json(data[0]);
+            await db.collection("Tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
         }
         else{
             response.sendStatus(401);
@@ -294,6 +306,9 @@ app.delete("/tickets/:id", async (request, response)=>{
 
 app.get("/ticketsRvsno", async (request, response)=>{
     try{
+        let LastWeek = new Date();
+        LastWeek.setDate(LastWeek.getDate() - 7);
+
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
         if(!token){
@@ -302,16 +317,16 @@ app.get("/ticketsRvsno", async (request, response)=>{
         }
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         if(authData.nivel=="ejecutivo"){
-            const ticketsr = await db.collection("Tickets").find({"status": "Resuelto"}).toArray();
-            const ticketsn = await db.collection("Tickets").find({"status": "Pendiente"}).toArray();
+            const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "fechaCreacion": { "$gte": LastWeek }}).toArray();
+            const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "fechaCreacion": { "$gte": LastWeek}}).toArray();
             response.json([ticketsr.length, ticketsn.length]);
         }else if(authData.nivel=="nacional"){
-            const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "region": authData.region}).toArray();
-            const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "region": authData.region}).toArray();
+            const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "region": authData.region, "fechaCreacion": { "$gte": LastWeek }}).toArray();
+            const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "region": authData.region,  "fechaCreacion": { "$gte": LastWeek }}).toArray();
             response.json([ticketsr.length, ticketsn.length]);
         }else if(authData.nivel=="local"){
-            const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "id": authData.id}).toArray();
-            const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "id": authData.id}).toArray();
+            const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "id": authData.id, "fechaCreacion": { "$gte": LastWeek }}).toArray();
+            const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "id": authData.id, "fechaCreacion": { "$gte": LastWeek }}).toArray();
             response.json([ticketsr.length, ticketsn.length]);
         }
         else 
@@ -325,6 +340,8 @@ app.get("/ticketsRvsno", async (request, response)=>{
 
 app.get('/ticketstop5', async (request, response)=>{
     try{
+        let LastWeek = new Date();
+        LastWeek.setDate(LastWeek.getDate() - 7);
         //console.log("entro")
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
@@ -332,6 +349,9 @@ app.get('/ticketstop5', async (request, response)=>{
         if(authData.nivel=="ejecutivo"){
             const topTickets = await db.collection("Tickets")
                 .aggregate([
+                    {
+                        $match: {"fechaCreacion": { "$gte": LastWeek }}
+                    },
                     { 
                         $group: {
                             _id: "$region",
@@ -357,12 +377,18 @@ app.get('/ticketstop5', async (request, response)=>{
 
 app.get('/ticketsPorRegion', async (request, response)=>{
     try{
+        let LastWeek = new Date();
+        LastWeek.setDate(LastWeek.getDate() - 7);
+
         let token=request.get("Authentication");
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         if(authData.nivel=="ejecutivo"){
             const topTickets = await db.collection("Tickets")
                 .aggregate([
+                    {
+                        $match: {"fechaCreacion": { "$gte": LastWeek }}
+                    },
                     { 
                         $group: {
                             _id: "$region",
@@ -402,7 +428,7 @@ app.post("/comentarios/:id", async (request, response)=>{
             addValue["id"]=id_com;
             addValue["id_tik"]=Number(request.params.id);
             addValue["id_cor"]=verifiedToken.id;
-            addValue["fecha"] = new Date().toLocaleString();
+            addValue["fecha"] = new Date();
             data=await db.collection('Comentarios').insertOne(addValue);
             response.json(data);
         }

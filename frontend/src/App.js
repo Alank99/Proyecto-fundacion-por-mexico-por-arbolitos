@@ -12,6 +12,9 @@ import { MyLayout } from './CustomLayout';
 import { CustomLogin } from './CustomLogin';  
 import { Dashboard } from './Dashboard';
 
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import PersonIcon from '@mui/icons-material/Person';
+
 const App = () =>{
   return(
       <Admin dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18nProvider} layout={MyLayout} loginPage={CustomLogin} dashboard={Dashboard}>
@@ -20,8 +23,8 @@ const App = () =>{
             <CustomRoutes>
               <Route path="/registrarse"  element={<Registrarse />}/>
             </CustomRoutes>
-            <Resource name="tickets" list={TicketList} show={TicketShow} edit={permissions=== 'ejecutivo' ?TicketEdit : null} create={TicketCreate} />
-            <Resource name="usuarios" list={permissions==='ejecutivo' ? UserList : null} show={UserShow} recordRepresentation="fullName"/>
+            <Resource name="tickets" list={TicketList} show={TicketShow} edit={permissions=== 'ejecutivo' ?TicketEdit : null} create={TicketCreate} icon={ConfirmationNumberIcon}/>
+            <Resource name="usuarios" list={permissions==='ejecutivo' ? UserList : null} show={UserShow} recordRepresentation="fullName" icon={PersonIcon}/>
           </>
         )}
       </Admin>
