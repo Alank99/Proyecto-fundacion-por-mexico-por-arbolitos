@@ -1,4 +1,6 @@
-import { Datagrid, List, TextField, Show, SimpleShowLayout } from 'react-admin';
+import { Datagrid, List, TextField, Show, SimpleForm,SimpleShowLayout,SelectInput,Create, TextInput } from 'react-admin';
+import { nivel,region } from './formato_ticket';
+import { usePermissions } from 'react-admin';
 
 export const UserList = () => (
     <List>
@@ -29,3 +31,22 @@ export const UserShow = () => (
         </SimpleShowLayout>
     </Show>
   );
+
+  export const UserCreate = () => {
+    const { permissions } = usePermissions();
+    
+    const filtroEstatus = permissions === 'ejecutivo' ? nivel : [nivel[0], nivel[1]];
+
+    return (
+        <Create>
+            <SimpleForm>
+                <TextInput source="username" label="Usuario" />
+                <TextInput source="fullName" label="Nombre Apellido" />
+                <TextInput source="password" label="Contraseña" />
+                <SelectInput source="nivel" label="Nivel" choices={filtroEstatus} />
+                <SelectInput source="region" label="Región" choices={region} />
+            </SimpleForm>
+        </Create>
+    );
+  };
+

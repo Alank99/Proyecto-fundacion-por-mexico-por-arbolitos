@@ -50,7 +50,7 @@ export const Dashboard = () => {
     ];
   
     // Filtra las pestañas basándose en los permisos del usuario
-    const filteredTabs = permissions === 'ejecutivo' ? tabs : [tabs[0]];
+    const filteredTabs = permissions === 'ejecutivo' ? tabs : [tabs[0], tabs[1]];
   
     const handleChange = (event, newValue) => {
       setValue(newValue);
