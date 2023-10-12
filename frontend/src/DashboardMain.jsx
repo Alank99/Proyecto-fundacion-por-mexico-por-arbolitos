@@ -1,6 +1,8 @@
 import { Box, Paper, Container, Grid, Typography } from '@mui/material';
 import { useGetList } from 'react-admin';
-import { format, differenceInDays } from 'date-fns';
+import { differenceInDays } from 'date-fns';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const NumTicket = () => {
     const { data, total } = useGetList('tickets', {
@@ -28,16 +30,28 @@ const NumTicket = () => {
 
                     return (
                         <Grid item key={record.id}>
-                            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                <Typography component="h1" variant='h7'>
-                                    {record.descripcion}
-                                </Typography>
-                                <Typography component="p" variant='body1'>
-                                    El aula en la que se levantó el ticket fue en: <i>{record.aula}</i>
-                                </Typography>
-                                <Typography component="p" variant='body1'>
-                                    Días sin resolver: <i>{daysSinceCreation} días </i>
-                                </Typography>
+                            <Paper sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        {record.prioridad === 'Alta' && <PriorityHighIcon color="error" style={{ fontSize: '50px' }} />}
+                                        {record.prioridad === 'Media' && <PriorityHighIcon color="warning" style={{ fontSize: '50px' }} />}
+                                        {record.prioridad === 'Baja' && <PriorityHighIcon color="info" style={{ fontSize: '50px' }} />}
+                                    </div>
+                                    <div>
+                                        <Typography component="h1" variant='h7'>
+                                            {record.descripcion}
+                                        </Typography>
+                                        <Typography component="p" variant='body1'>
+                                            El aula en la que se levantó el ticket fue en: <i>{record.aula}</i>
+                                        </Typography>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <AccessTimeIcon style={{ marginRight: '8px' }} />
+                                    <Typography component="p" variant='body1'>
+                                        {daysSinceCreation} días activo
+                                    </Typography>
+                                </div>
                             </Paper>
                         </Grid>
                     );
