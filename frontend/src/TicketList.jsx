@@ -97,16 +97,39 @@ export const TicketShow = props => {
 export const TicketEdit = () => (
   <Edit>
     <SimpleForm>
-      <TextField source="id" label="ID" />
-      <TextField source="id_cor" label="Coordinador" />
-      <TextField source="prioridad" label="Prioridad" />
-      <TextField source="categoria" label="Categoría" />
-      <TextField source="subcategoria" label="Subcategoría" />
-      <TextField source="descripcion" label="Descripción" />
-      <TextField source="aula" label="Aula" />
-      <SelectInput source="status" label="Estado" choices={status} />
-      <DateField source="fechaCreacion" label="Fecha" />
-      <TextField source="region" label="Región" />
+      <div style={{ marginBottom: '10px' }}>
+      <strong>ID de ticket: </strong>  <TextField source="id" label="ID" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Usuario: </strong> <ReferenceField source="id_cor" reference="usuarios" label="Usuario" link="show" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Id del usuario: </strong><TextField source="id_cor" label="Coordinador" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Prioridad: </strong><TextField source="prioridad" label="Prioridad" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Categoria: </strong><TextField source="categoria" label="Categoría" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Subcategoria: </strong><TextField source="subcategoria" label="Subcategoría" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Descripcion: </strong><TextField source="descripcion" label="Descripción" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Aula: </strong><TextField source="aula" label="Aula" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <SelectInput source="status" choices={status} label="Estado" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Fecha de creación: </strong><DateField source="fechaCreacion" label="Fecha de creación" />
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        <strong>Región: </strong><TextField source="region" label="Región" />
+      </div>
     </SimpleForm>
   </Edit>
 );
