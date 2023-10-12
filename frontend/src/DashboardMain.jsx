@@ -5,7 +5,7 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const NumTicket = () => {
-    const { data, total } = useGetList('tickets', {
+    const { data } = useGetList('tickets', {
         filter: { fecha: 'true', status: 'Pendiente' },
     }, {
         pagination: { page: 1, perPage: 10 },

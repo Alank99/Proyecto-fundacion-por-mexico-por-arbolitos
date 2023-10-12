@@ -1,9 +1,14 @@
-import { Chart as ChartJS, ArcElement,LinearScale,BarElement,CategoryScale, Tooltip, Legend, RadialLinearScale } from 'chart.js';
+import { Chart as ChartJS, ArcElement, LinearScale, BarElement, CategoryScale, Tooltip, Legend, RadialLinearScale } from 'chart.js';
 import { Doughnut, PolarArea, Bar } from 'react-chartjs-2';
 import { useState, useEffect } from 'react';
-import host from './const.js'
+import host from './const.js';
 
-ChartJS.register(ArcElement, Tooltip, Legend, RadialLinearScale, LinearScale, BarElement,CategoryScale);
+ChartJS.register(ArcElement, Tooltip, Legend, RadialLinearScale, LinearScale, BarElement, CategoryScale);
+
+const centeredChartStyle = {
+  width: '40%',
+  margin: 'auto',
+};
 
 const ChartComponent = () => {
   const [chartData, setChartData] = useState({ Resueltos: 0, Pendientes: 0 });
@@ -14,7 +19,7 @@ const ChartComponent = () => {
         const response = await fetch(`https://${host}:1337/ticketsRvsno`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json', 
+            'Content-Type': 'application/json',
             'Authentication': localStorage.getItem("auth"),
           },
         });
@@ -59,7 +64,7 @@ const ChartComponent = () => {
   };
 
   return (
-    <div style={{width:'50%', height:'50%'}}>
+    <div style={centeredChartStyle}>
       <Doughnut data={data} />
     </div>
   );
@@ -115,8 +120,8 @@ const TicketsTop5 = () => {
   };
 
   return (
-    <div style={{width:'50%', height:'50%'}}>
-      <PolarArea data={chartData}/>
+    <div style={centeredChartStyle}>
+      <PolarArea data={chartData} />
     </div>
   );
 };
@@ -171,8 +176,8 @@ const TicketsPorRegion = () => {
   };
 
   return (
-    <div style={{width:'50%', height:'50%'}}>
-      <Bar data={chartData}/>
+    <div style={centeredChartStyle}>
+      <Bar data={chartData} />
     </div>
   );
 };
