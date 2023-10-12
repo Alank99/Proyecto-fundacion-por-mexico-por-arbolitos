@@ -177,8 +177,4 @@ const TicketsPorRegion = () => {
   );
 };
 
-
-
-
-
 export { ChartComponent, TicketsTop5, TicketsPorRegion };
