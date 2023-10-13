@@ -24,7 +24,8 @@ Una vez descomprimido continuar con la creacion del servidor de MongoDB
 
 
 #### Pegar la siguiente información a la nueva collección
-Una vez seleccionado la colección de usuarios, darle click en la parte de "ADD DATA" y luego en "insert document" copiary pegar lo siguiente
+Una vez seleccionado la colección de usuarios, darle click en la parte de "ADD DATA" y luego en "insert document" copiar y pegar lo siguiente
+
 
     ,
     "usuario": "root",
@@ -33,6 +34,8 @@ Una vez seleccionado la colección de usuarios, darle click en la parte de "ADD 
     "nivel": "ejecutivo",
     "region": "cdmx",
     "id": 1
+
+    
 pegarlo en la parte de abajo del los segundos corchetes de _id
     
 
