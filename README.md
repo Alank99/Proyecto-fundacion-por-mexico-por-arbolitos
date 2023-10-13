@@ -20,21 +20,20 @@ Una vez descomprimido continuar con la creacion del servidor de MongoDB
 ### Creación del servidor de MongoDB
     Iniciar una conexión a mongodb://localhost:27017/
     Crear una base de datos llamada "PorMexico"
-    Crear una collección llamada "Usuarios"
+    Crear una collección llamada "Usuarios"}
 
 
 #### Pegar la siguiente información a la nueva collección
-{
-    "_id": {
-        "$oid": "6515a36c2cc211faea809b62"
-    },
+Una vez seleccionado la colección de usuarios, darle click en la parte de "ADD DATA" y luego en "insert document" copiary pegar lo siguiente
+    ,
     "usuario": "root",
     "password": "$2b$10$Wm1gWY2Sgs0SGXAd2m.f7up8r/6cFQ0DSDQ0PcplzhhKKp6rl5TJm",
     "fullName": "root",
     "nivel": "ejecutivo",
     "region": "cdmx",
     "id": 1
-    }
+pegarlo en la parte de abajo del los segundos corchetes de _id
+    
 
   *La contraseña del usuario es:* root
 
