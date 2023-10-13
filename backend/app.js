@@ -174,14 +174,26 @@ app.get("/tickets", async (request, response) => {
         }
 
         //Tratar con filtros
-        if ("status" in request.query){
-            parametersFind['status'] = request.query.status;
-        }
         if ("fecha" in request.query){
             let LastWeek = new Date();
             LastWeek.setDate(LastWeek.getDate() - 7);
-            parametersFind['fechaCreacion'] = {"$lt" : LastWeek};
+            if (request.query.fecha == "true")
+                parametersFind['fechaCreacion'] = {"$lt" : LastWeek};
+            else
+                parametersFind['fechaCreacion'] = {"$gte" : LastWeek};
         }
+        if ("descripcion" in request.query){
+            parametersFind['descripcion'] = {"$regex": request.query.descripcion};
+        }
+        if ("status" in request.query)
+            parametersFind['status'] = request.query.status;
+        if ("prioridad" in request.query)
+            parametersFind['prioridad'] = request.query.prioridad;
+        if ("region" in request.query)
+            parametersFind['region'] = request.query.region;
+        if ("categoria" in request.query)
+            parametersFind['categoria'] = request.query.categoria;
+
 
         if ("_sort" in request.query) {
             let sortBy = request.query._sort;
@@ -195,14 +207,8 @@ app.get("/tickets", async (request, response) => {
             response.set("X-Total-Count", data.length);
             data = data.slice(start, end);
             response.json(data);
-        } else if ("id" in request.query) {
-            let data = [];
-            for (let index = 0; index < request.query.id.length; index++) {
-                let dataObtain = await db.collection("Tickets").find({ id: Number(request.query.id[index]) }).project({ _id: 0 }).toArray();
-                data = await data.concat(dataObtain);
-            }
-            response.json(data);
-        } else {
+        }
+        else {
             let data = [];
             data = await db.collection("Tickets").find(request.query).project({ _id: 0 }).toArray();
             response.set("Access-Control-Expose-Headers", "X-Total-Count");

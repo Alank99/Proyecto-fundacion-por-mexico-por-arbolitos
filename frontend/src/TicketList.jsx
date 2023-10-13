@@ -1,21 +1,36 @@
-import { Datagrid, List, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput ,Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId, SimpleShowLayout } from 'react-admin';
+import { Datagrid, List, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput, SearchInput, Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId, SimpleShowLayout } from 'react-admin';
 import {useState,useEffect} from 'react';
+import { Chip } from '@mui/material';
 
 //import {Link} from 'react-router-dom';
-import {categorias, subcategoria, prioridad,status} from './formato_ticket';
+import {categorias, subcategoria, prioridad, status, region} from './formato_ticket';
 
 import NuevoComentario from "./nuevoComentario.js";
 //import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 
+const QuickFilter = ({ label }) => {
+  return <Chip sx={{ marginBottom: 1 }} label={label} />;
+};
+
+const ticketFilters = [
+  <SearchInput source="descripcion" alwaysOn />, 
+  <QuickFilter source="fecha" label="Tickets de la Semana" defaultValue={"false"}/>,
+  <SelectInput source="status" choices={status} label="Estado del ticket" />,
+  <SelectInput source="prioridad" choices={prioridad} label="Prioridad del ticket" />,
+  <SelectInput source="region" choices={region} label="Región del ticket"/>,
+  <SelectInput source="categoria" choices={categorias} label="Categoría del ticket" />,
+];
+
 export const TicketList = () => {
 
   return (
-    <List sort={{field: 'fechaCreacion', order: 'DESC'}}>
+    <List filters={ticketFilters} sort={{field: 'fechaCreacion', order: 'DESC'}}>
       <Datagrid rowClick="show">
         <ReferenceField source="id_cor" reference="usuarios" label="Usuario" link="show" />
         <TextField source="categoria" label="Categoría" />
         <TextField source="prioridad" />
         <TextField source="region" label="Región" />
+        <TextField source="descripcion" label="Contenido" />
         <DateField source="fechaCreacion" label="Fecha de creación" />
         <TextField source="status" label="Estado del ticket" />
         <EditButton />
@@ -185,7 +200,7 @@ export const TicketCreate = () => {
         {hasFolio && (
           <TextInput source="Numerodefolio"  />
         )}
-        <TextInput multiline fullWidth source="descripcion" />
+        <TextInput multiline rows={5} fullWidth source="descripcion" />
         <TextInput source="aula" />
       </SimpleForm>
     </Create>
