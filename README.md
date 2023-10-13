@@ -25,6 +25,7 @@ Una vez descomprimido continuar con la creacion del servidor de MongoDB
 
 #### Pegar la siguiente información a la nueva collección
 Una vez seleccionado la colección de usuarios, darle click en la parte de "ADD DATA" y luego en "insert document" copiary pegar lo siguiente
+
     ,
     "usuario": "root",
     "password": "$2b$10$Wm1gWY2Sgs0SGXAd2m.f7up8r/6cFQ0DSDQ0PcplzhhKKp6rl5TJm",
