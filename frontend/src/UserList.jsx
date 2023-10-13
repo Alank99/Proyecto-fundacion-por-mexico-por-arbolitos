@@ -40,7 +40,7 @@ export const UserShow = () => (
 
     const onSuccess = () => {
         notify("Usuario ha sido creado");
-        redirect("/usuarios");
+        redirect("/us");
         refresh();
     };
 
