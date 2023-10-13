@@ -5,7 +5,7 @@ Mediante la liga https://github.com/Alank99/hackerlocos/tree/main acceder al rep
 
 ![Parte de git](../hackerlocos/Entregables/Imagenes/Captura%20de%20pantalla%202023-10-13%20135150.png)
 
-Una vez dentro hacer clic en el botón <> Code   
+Una vez dentro hacer clic en el botón "<> Code"   
 
 ![Parte de git](Entregables/Imagenes/imagen2.png)
 
