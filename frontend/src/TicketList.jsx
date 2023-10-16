@@ -21,7 +21,7 @@ const ticketFilters = [
   <SelectInput source="categoria" choices={categorias} label="Categoría del ticket" />,
 ];
 
-export const TicketList = () => {
+export const TicketList = () => { //Muestra la lista de tickets
 
   return (
     <List filters={ticketFilters} sort={{field: 'fechaCreacion', order: 'DESC'}}>
@@ -40,14 +40,14 @@ export const TicketList = () => {
   );
 };
 
-export const TicketShow = props => {
+export const TicketShow = props => { //Muestra los datos de un ticket al hacer clic en él
   const recordId = useGetRecordId();
 
   return (
     <Show {...props}>
         <TabbedShowLayout>
           <Tab label="Información">
-
+          {/*Todo el div es para que se separen de una manera visible la información*/}
             <SimpleShowLayout>
 
             <div style={{ marginBottom: '10px' }}>
@@ -88,6 +88,7 @@ export const TicketShow = props => {
           </Tab>
 
           <Tab label="Comentarios">
+          {/*Crea una pestaña de comentarios*/}
             <ReferenceManyField
             addLabel={false}
             reference="comentarios"
@@ -108,7 +109,7 @@ export const TicketShow = props => {
   );
 };
 
-export const TicketEdit = () => (
+export const TicketEdit = () => (//Edita el estado de un ticket
   <Edit>
     <SimpleForm>
       <div style={{ marginBottom: '10px' }}>
@@ -135,7 +136,7 @@ export const TicketEdit = () => (
       <div style={{ marginBottom: '10px' }}>
         <strong>Aula: </strong><TextField source="aula" label="Aula" />
       </div>
-      <div style={{ marginBottom: '10px' }}>
+      <div style={{ marginBottom: '10px' }}> {/*Solo se puede editar el estado del ticket*/}
         <SelectInput source="status" choices={status} label="Estado" />
       </div>
       <div style={{ marginBottom: '10px' }}>
@@ -148,7 +149,7 @@ export const TicketEdit = () => (
   </Edit>
 );
 
-export const TicketCreate = () => {
+export const TicketCreate = () => {//Crea un ticket nuevo
   const [categoriaSec, setCategoriasSec] = useState("");
   const [subcategoriaSec, setSubcategoriasSec] = useState([]);
   const [showSubcategoria, setShowSubcategoria] = useState(false);

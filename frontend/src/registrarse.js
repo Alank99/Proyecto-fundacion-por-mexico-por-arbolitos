@@ -2,12 +2,12 @@ import React, {useState} from "react";
 import {useRefresh, useNotify, useRedirect} from 'react-admin';
 import host from './const.js'
 
-const Registrarse = () =>{
+const Registrarse = () =>{ // Función para crear un usuario nuevo
     const notify = useNotify();
     const refresh = useRefresh();
     const redirect = useRedirect();
 
-    const [datos, setDatos]=useState({
+    const [datos, setDatos]=useState({ //Datos requeridos para el registro
         username: "",
         password: "",
         fullName: "",
@@ -43,7 +43,7 @@ const Registrarse = () =>{
         }
     };
 
-    return (
+    return ( //html para el registro
         <div>
             <h2>Registro de nuevos usuarios</h2>
             <form>

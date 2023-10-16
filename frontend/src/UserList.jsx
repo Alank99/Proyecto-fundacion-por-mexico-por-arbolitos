@@ -2,7 +2,7 @@ import { Datagrid, List, TextField, Show, SimpleForm,SimpleShowLayout,SelectInpu
 import { nivel,region } from './formato_ticket';
 import { usePermissions, useNotify, useRedirect, useRefresh, useUnique } from 'react-admin';
 
-export const UserList = () => (
+export const UserList = () => ( //Muestra la lista de usuarios
     <List>
         <Datagrid rowClick="show">
             <TextField source="fullName" label="Nombre Completo"/>
@@ -12,7 +12,7 @@ export const UserList = () => (
     </List>
 );
 
-export const UserShow = () => (
+export const UserShow = () => ( //Muestra los datos de un usuario al hacer clic en él
     <Show>
         <SimpleShowLayout>
         <div style={{ marginBottom: '10px' }}>
@@ -31,7 +31,7 @@ export const UserShow = () => (
     </Show>
   );
 
-  export const UserCreate = () => {
+  export const UserCreate = () => { //Crea un usuario nuevo
     const notify = useNotify();
     const refresh = useRefresh();
     const redirect = useRedirect();
