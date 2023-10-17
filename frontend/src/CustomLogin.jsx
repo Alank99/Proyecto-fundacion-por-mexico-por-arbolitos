@@ -6,22 +6,23 @@ import logo from "./fundacionmx.png";
 
 export const CustomLogin = () => {
   const login = useLogin();
-  const [username, setUsername] = useState("");
+  //Guarda la información
+  const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
   
-  const handleLogin = () => {
+  const handleLogin = () => { //Inicia sesión
     login({ username, password });
   };
 
-  const handleKeyPress = (e) =>
+  const handleKeyPress = (e) => 
 {
-  if (e.key === "Enter")
+  if (e.key === "Enter") //Si se presiona enter, se inicia sesión
   {
     handleLogin();
   }
 };
 
-  return (
+  return ( //Muestra la página de inicio de sesión
     <div className="login-page">
     <div className="custom-login"> 
     <img src={logo} alt="Logo de Fundación Por México" className="custom-logo" />

@@ -5,9 +5,10 @@ import { usePermissions } from 'react-admin';
 import {ChartComponent, TicketsTop5 ,TicketsPorRegion} from './GraficasDashboard.jsx';
 import {MyDashboard} from "./DashboardMain.jsx"
 
-function CustomTabPanel(props) {
+function CustomTabPanel(props) { //Pestañas del tablero
   const { children, value, index, ...other } = props;
 
+   //Cada pestaña tiene un índice y un valor, si el valor es igual al índice, se muestra la pestaña
   return (
     <div
       role="tabpanel"
@@ -25,13 +26,13 @@ function CustomTabPanel(props) {
   );
 }
   
-CustomTabPanel.propTypes = {
+CustomTabPanel.propTypes = { //Propiedades de las pestañas
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
 };
 
-function a11yProps(index) {
+function a11yProps(index) { 
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
@@ -42,7 +43,7 @@ export const Dashboard = () => {
     const [value, setValue] = useState(0);
     const { permissions } = usePermissions();
   
-    const tabs = [
+    const tabs = [ //Nombre de las pestañas
       { label: 'Principal', component: <MyDashboard />},
       { label: 'Tickets Resueltos', component: <ChartComponent /> },
       { label: 'Top 5 de Regiones con ticket', component: <TicketsTop5 /> },
@@ -56,7 +57,7 @@ export const Dashboard = () => {
       setValue(newValue);
     };
   
-    return (
+    return ( //Muestra las pestañas
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="Tablero" variant='scrollable' scrollButtons='auto'>

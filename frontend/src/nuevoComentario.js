@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import {useRefresh, useNotify} from 'react-admin';
 import host from './const.js'
 
-const NuevoComentario = (props) => {
+const NuevoComentario = (props) => { // Función para crear un comentario nuevo
     const refresh = useRefresh();
     const notify = useNotify();
 
-    const [datos, setDatos] = useState({
+    const [datos, setDatos] = useState({ //Datos requeridos para el comentario
         contenido: "",
       });
   
-      const handleChange = (e) => {
+      const handleChange = (e) => { //Coloca la información en su lugar
         setDatos({
             ...datos,
             [e.target.name]: e.target.value,
@@ -18,7 +18,6 @@ const NuevoComentario = (props) => {
         };
   
       const handleSendData = async() => {
-          //console.log(props.id_tik)
           // Convert the form data to JSON
           const request = await new Request(`https://${host}:1337/comentarios/${Number(props.id_tik)}`, {
             method: 'POST',
@@ -38,7 +37,7 @@ const NuevoComentario = (props) => {
           }
       };
       const {contenido}= datos;
-      return(
+      return( //html
           <div>
               <form>
                 <div>
