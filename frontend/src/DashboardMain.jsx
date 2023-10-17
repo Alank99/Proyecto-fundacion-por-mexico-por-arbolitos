@@ -4,7 +4,7 @@ import { differenceInDays } from 'date-fns';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
-const NumTicket = () => {
+const NumTicket = () => { //Muestra el número de tickets que llevan más de una semana sin resolverse
     const { data } = useGetList('tickets', {
         filter: { fecha: 'true', status: 'Pendiente' },
     }, {
@@ -20,7 +20,7 @@ const NumTicket = () => {
                 </Grid>
             </Grid>
         )
-    else {
+    else { //Formato de los tickets que llevan más de una semana sin resolverse
         return (
             <Grid direction="column" container spacing={3}>
                 {data.map(record => {
@@ -61,7 +61,7 @@ const NumTicket = () => {
     }
 }
 
-export const MyDashboard = () => (
+export const MyDashboard = () => ( //La página principal del administrador para la sección de tablero
     <Box sx={{ display: 'flex' }}>
         <Container maxWidth="lg">
             <Typography component="h2" variant="h6" color="primary" gutterBottom>Tickets con más de una semana sin resolver: </Typography>

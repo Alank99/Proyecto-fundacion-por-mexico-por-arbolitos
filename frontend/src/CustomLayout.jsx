@@ -16,26 +16,26 @@ import { Button } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 
-export const mydarktheme = {
+export const mydarktheme = { //Define el tema oscuro
   palette: {
     ...defaultDarkTheme.palette,
   },
 };
 
-export const mylighttheme = {
+export const mylighttheme = { //Define el tema claro
   palette: {
     ...defaultLightTheme.palette,
   },
 };
 
-export const ThemeToggler = () => {
+export const ThemeToggler = () => { //Cambia el tema
   const [theme, setTheme] = useTheme();
 
   const onClick = () => {
-    setTheme(theme === mydarktheme ? mylighttheme : mydarktheme);
+    setTheme(theme === mydarktheme ? mylighttheme : mydarktheme); //Si el tema es oscuro, lo cambia a claro, y viceversa
   };
 
-  return (
+  return ( //Muestra el botón para cambiar el tema
     <Button
       style={{ backgroundColor: "#426fa6", color: "white" }}
       onClick={onClick}
@@ -46,12 +46,12 @@ export const ThemeToggler = () => {
   );
 };
 
-// It's important to pass the ref to allow Material UI to manage the keyboard navigation
-const MyLogoutButton = forwardRef((props, ref) => {
+// Es importante pasar la ref para permitir que Material UI gestione la navegación por teclado
+const MyLogoutButton = forwardRef((props, ref) => { //Cierra la sesión
   const logout = useLogout();
   const handleClick = () => logout();
 
-  return (
+  return ( //Muestra el botón para salir de la aplicación
     <MenuItem
       style={{backgroundColor: "#800000", color: "white" }}
       onClick={handleClick}
@@ -64,10 +64,10 @@ const MyLogoutButton = forwardRef((props, ref) => {
   );
 });
 
-const MyUserMenu = () => {
-    const { identity } = useGetIdentity();
+const MyUserMenu = () => { //Muestra el menú del usuario
+    const { identity } = useGetIdentity(); 
 
-    return (
+    return ( //Muestra la información del usuario
   <UserMenu>
     <MenuItem>
     <p> <strong> Inició sesión como: </strong> {identity? identity.usuario : 'usuario desconocido'}. </p>
@@ -83,7 +83,7 @@ const MyUserMenu = () => {
     );
 };  
 
-const MyAppBar = () => (
+const MyAppBar = () => ( //Muestra la barra de la aplicación
   <AppBar userMenu={<MyUserMenu />}>
     <ThemeToggler />
     <Box component="span" flex={1} />

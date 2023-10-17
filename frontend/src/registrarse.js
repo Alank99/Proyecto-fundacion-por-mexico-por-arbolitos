@@ -15,15 +15,14 @@ const Registrarse = () =>{ // Función para crear un usuario nuevo
         region:"",
     });
 
-    const handleChange= (event)=>{
+    const handleChange= (event)=>{ //Coloca la información en su lugar
         setDatos({
             ...datos,
             [event.target.name]: event.target.value,
         });
     };
 
-    const handleSendData = async() => {
-        // Convert the form data to JSON
+    const handleSendData = async() => {// Convert the form data to JSON
         const request = await new Request(`https://${host}:1337/registrarse`, {
             method: 'POST',
             body: JSON.stringify(datos),
