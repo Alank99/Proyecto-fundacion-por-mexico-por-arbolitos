@@ -44,7 +44,7 @@ async function log(sujeto, accion, objeto){
 //Crea un nuevo usuario
 app.post("/usuarios", async(request, response)=>{
     let id = await make_id("Usuarios") ;
-    let user = request.body.username;
+    let user = request.body.username;  
     let pass = request.body.password;
     let fname = request.body.fullName;
     let nivel = request.body.nivel;
@@ -63,19 +63,19 @@ app.post("/usuarios", async(request, response)=>{
     }
 })
 
-//Da
+//realizar la funcion de login y crear un token
 app.post("/login", async(request, response)=>{
     let user=request.body.username;
     let pass=request.body.password;
-    let data= await db.collection("Usuarios").findOne({"usuario": user});
+    let data= await db.collection("Usuarios").findOne({"usuario": user});//encuentra el usuario que esta intentando logearse
     if(data==null){
         response.sendStatus(401);
     }else{
-        bcrypt.compare(pass, data.password, (error, result)=>{
+        bcrypt.compare(pass, data.password, (error, result)=>{//compara la contraseña ingresada con la contraseña en la base de datos
             if(result){
-                let token=jwt.sign({ id: data.id, usuario: data.usuario , nivel:data.nivel ,region:data.region}, "secretKey", {expiresIn: 3600});
+                let token=jwt.sign({ id: data.id, usuario: data.usuario , nivel:data.nivel ,region:data.region}, "secretKey", {expiresIn: 3600});//se crea el token
                 log(user, "login", "");
-                response.json({"token": token, id:data.id, nivel:data.nivel , region:data.region})
+                response.json({"token": token, id:data.id, nivel:data.nivel , region:data.region})//le da el token al usuario con parametros adicionales para el frontend
             }else{
                 response.sendStatus(401)
             }
@@ -83,23 +83,23 @@ app.post("/login", async(request, response)=>{
     }
 })
 
+
+//le da la informacion de los usuarios al frontend con get many/get referece/get list
 app.get("/usuarios", async (request, response) => {
     try {
-        let token = request.get("Authentication");
+        let token = request.get("Authentication");//obtiene el token y verifica que exista
         if (!token) {
             response.sendStatus(401);
             return;
         }
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let authData = await db.collection("Usuarios").findOne({ "id": verifiedToken.id });
+        let authData = await db.collection("Usuarios").findOne({ "id": verifiedToken.id });//comprueba que el usuario exista en la base de datos
         if (!authData || !authData.nivel) {
             response.sendStatus(401);
             return;
         }
         let parametersFind = {};
-        if (authData.nivel === "local") {
-            parametersFind["id"] = authData.id;
-        } else if (authData.nivel === "nacional") {
+         if (authData.nivel === "nacional" || authData.nivel === "local") {
             parametersFind["region"] = authData.region;
         }
         if ("_sort" in request.query) {
@@ -133,6 +133,7 @@ app.get("/usuarios", async (request, response) => {
     }
 });
 
+//le da a un solo usuario
 app.get("/usuarios/:id", async (request, response)=>{
     try{
         let token = request.get("Authentication");
@@ -152,7 +153,7 @@ app.get("/usuarios/:id", async (request, response)=>{
     }
 })
 
-//getList, getMany, getManyReference
+//obtiene la informacion de los tickets de forma de get many/get referece/get list
 app.get("/tickets", async (request, response) => {
     try {
         let token = request.get("Authentication");
@@ -166,15 +167,16 @@ app.get("/tickets", async (request, response) => {
             response.sendStatus(401);
             return;
         }
-        let parametersFind = {};
+        //autorizado para ver tickets conforme a su nivel
+        let parametersFind = {};    
         if (authData.nivel === "local") {
             parametersFind["id_cor"] = authData.id;
         } else if (authData.nivel === "nacional") {
             parametersFind["region"] = authData.region;
         }
 
-        //Tratar con filtros
-        if ("fecha" in request.query){
+        //Si utiliza filtros para el get list
+        if ("fecha" in request.query){ 
             let LastWeek = new Date();
             LastWeek.setDate(LastWeek.getDate() - 7);
             if (request.query.fecha == "true")
@@ -220,7 +222,7 @@ app.get("/tickets", async (request, response) => {
     }
 });
 
-//getOne
+//da la informacionde un solo ticket y verifica que el usuario este autorizado
 app.get("/tickets/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
@@ -230,6 +232,9 @@ app.get("/tickets/:id", async (request, response)=>{
         if(authData.nivel=="local"){
             parametersFind["id_cor"]=verifiedToken.id;
         }
+        else if(authData.nivel=="nacional"){
+            parametersFind["region"]=authData.region;
+        }
         let data=await db.collection('Tickets').find(parametersFind).project({_id:0}).toArray();
         log(verifiedToken.id, "ver objeto", request.params.id)
         response.json(data[0]);
@@ -238,7 +243,7 @@ app.get("/tickets/:id", async (request, response)=>{
     }
 })
 
-//create
+//creas un nuevo ticket
 app.post("/tickets", async (request, response)=>{
     try{
         let token=request.get("Authentication");
@@ -249,7 +254,7 @@ app.post("/tickets", async (request, response)=>{
         let verifiedToken = await jwt.verify(token, "secretKey");
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let addValue=request.body
-
+        //agrega los valores que no se ingresan en el body
         addValue["id"]= await make_id("Tickets");
         addValue["id_cor"]=verifiedToken.id;
         addValue["usuario"]=authData.usuario;
@@ -264,7 +269,7 @@ app.post("/tickets", async (request, response)=>{
     }
 }) 
 
-//update
+//modifica el ticket solo en el status y la fecha de cierre
 app.put("/tickets/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
@@ -279,6 +284,7 @@ app.put("/tickets/:id", async (request, response)=>{
 
         let data=await db.collection('Tickets').findOne({"id": Number(addValue["id"])});
         let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
+        //solo se modifica si el usuario es el creador del ticket, es un ejecutivo o es un usuario nacional de la misma region
         if(data.id_cor === verifiedToken.id || authData.nivel === "nacional" && authData.region === data.region || authData.nivel === "ejecutivo" ){
             await db.collection("Tickets").updateOne({"id": addValue["id"]}, {"$set": addValue});
         }
@@ -290,7 +296,7 @@ app.put("/tickets/:id", async (request, response)=>{
     }
 })
 
-//delete
+//elimina a un ticket y sus comentarios 
 app.delete("/tickets/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
@@ -309,8 +315,10 @@ app.delete("/tickets/:id", async (request, response)=>{
     }
 })
 
+//obtiene la informacion de los tickets resuelto y no resueltos, ademas de aplicarle un filtro interno segun el nivel del usuario
 app.get("/ticketsRvsno", async (request, response)=>{
     try{
+        //solo ver de la ultima semana
         let LastWeek = new Date();
         LastWeek.setDate(LastWeek.getDate() - 7);
 
@@ -343,6 +351,7 @@ app.get("/ticketsRvsno", async (request, response)=>{
     }
 })
 
+//obtiene el top 5 de las regiones con mas tickets y solo lo ve el ejecutivo
 app.get('/ticketstop5', async (request, response)=>{
     try{
         let LastWeek = new Date();
@@ -379,6 +388,7 @@ app.get('/ticketstop5', async (request, response)=>{
     }
 })
 
+//En este obtiene de todo mexico 
 app.get('/ticketsPorRegion', async (request, response)=>{
     try{
         let LastWeek = new Date();
@@ -413,7 +423,7 @@ app.get('/ticketsPorRegion', async (request, response)=>{
     }
 })
 
-//crear comentario
+//crear comentario pero lo relaciona a un ticket y al usuario que lo creo
 app.post("/comentarios/:id", async (request, response)=>{
     try{
         let token=request.get("Authentication");
@@ -440,7 +450,7 @@ app.post("/comentarios/:id", async (request, response)=>{
     }
 })
 
-//Mostrar comentarios
+//Mostrar comentarios , pero los busca segun el ticket que se esta viendo
 app.get("/comentarios", async (request, response) => {
     try {
         let token = request.get("Authentication");
