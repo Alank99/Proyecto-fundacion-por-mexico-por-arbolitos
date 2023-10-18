@@ -55,7 +55,7 @@ const MyLogoutButton = forwardRef((props, ref) => { //Cierra la sesión
     <MenuItem
       style={{backgroundColor: "#800000", color: "white" }}
       onClick={handleClick}
-      ref={ref}
+      ref={ref} 
       // It's important to pass the props to allow Material UI to manage the keyboard navigation
       {...props}
     > 

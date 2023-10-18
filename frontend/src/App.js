@@ -15,6 +15,8 @@ import { Dashboard } from './Dashboard';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import PersonIcon from '@mui/icons-material/Person';
 
+
+//en el app se esta utilizando dataProvider para conseguir los permissions  y darle acceso a los usuarios conforme a su nivel
 const App = () =>{
   return(
       <Admin dataProvider={dataProvider} authProvider={authProvider} i18nProvider={i18nProvider} layout={MyLayout} loginPage={CustomLogin} dashboard={Dashboard}>
@@ -31,3 +33,4 @@ const App = () =>{
   );
 };
 export default App;
+

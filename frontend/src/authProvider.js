@@ -15,22 +15,22 @@ const authProvider = {
                 throw new Error(response.statusText);
             }
             const auth = await response.json();
-            localStorage.setItem('auth', auth.token);
+            localStorage.setItem('auth', auth.token); //guarda el token en el localstorage
             localStorage.setItem('identity',  JSON.stringify({"id":auth.id,"usuario":username,"nivel":auth.nivel,"region":auth.region}));
             return Promise.resolve()
         } catch {
             throw new Error('Error en usuario o password');
         }
     },
-    logout: ()=>{
+    logout: ()=>{ //borra el token y el identity del localstorage al cerrar sesion
         localStorage.removeItem("auth");
         localStorage.removeItem("identity");
         return Promise.resolve();
     },
-    checkAuth: ()=>{
+    checkAuth: ()=>{ //verifica si hay un token en el localstorage
         return localStorage.getItem("auth")? Promise.resolve(): Promise.reject();
     },
-    checkError: (error) =>{
+    checkError: (error) =>{ //verifica si hay un error en el token
         const status=error.status;
         if(status===401|| status===403){
             localStorage.removeItem("auth");
@@ -39,14 +39,14 @@ const authProvider = {
         }
         return Promise.resolve();
     },
-    getIdentity: ()=>{
+    getIdentity: ()=>{ //obtiene el identity del localstorage
         try{
             return Promise.resolve(JSON.parse(localStorage.getItem("identity")));
         }catch{
             return Promise.reject()
         }
     },
-    getPermissions: ()=>{
+    getPermissions: ()=>{ //obtiene el nivel del usuario del localstorage
         const role = JSON.parse(localStorage.getItem("identity")).nivel;
         //console.log(role)
         return role ? Promise.resolve(role) : Promise.reject();

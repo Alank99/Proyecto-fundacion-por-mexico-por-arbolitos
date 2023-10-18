@@ -6,7 +6,7 @@ import {ChartComponent, TicketsTop5 ,TicketsPorRegion} from './GraficasDashboard
 import {MyDashboard} from "./DashboardMain.jsx"
 
 function CustomTabPanel(props) { //Pestañas del tablero
-  const { children, value, index, ...other } = props;
+  const { children, value, index, ...other } = props; //Se obtienen los valores de las pestañas
 
    //Cada pestaña tiene un índice y un valor, si el valor es igual al índice, se muestra la pestaña
   return (
@@ -17,9 +17,10 @@ function CustomTabPanel(props) { //Pestañas del tablero
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
+      {value === index && (//Si el valor es igual al índice, se muestra la pestaña
+      //Se muestra el contenido de la pestaña
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <Typography>{children}</Typography> 
         </Box>
       )}
     </div>
@@ -40,10 +41,10 @@ function a11yProps(index) {
 }
 
 export const Dashboard = () => {
-    const [value, setValue] = useState(0);
-    const { permissions } = usePermissions();
+    const [value, setValue] = useState(0); //Valor inicial de las pestañas
+    const { permissions } = usePermissions();//consigue el permiso del usuario
   
-    const tabs = [ //Nombre de las pestañas
+    const tabs = [ //llama los componentes de las graficas 
       { label: 'Principal', component: <MyDashboard />},
       { label: 'Tickets Resueltos', component: <ChartComponent /> },
       { label: 'Top 5 de Regiones con ticket', component: <TicketsTop5 /> },

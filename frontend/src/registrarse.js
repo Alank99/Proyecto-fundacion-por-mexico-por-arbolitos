@@ -7,7 +7,7 @@ const Registrarse = () =>{ // Función para crear un usuario nuevo
     const refresh = useRefresh();
     const redirect = useRedirect();
 
-    const [datos, setDatos]=useState({ //Datos requeridos para el registro
+    const [datos, setDatos]=useState({ //Configura en un esatdo inicial como es que se van a ver los datos inicialmente
         username: "",
         password: "",
         fullName: "",

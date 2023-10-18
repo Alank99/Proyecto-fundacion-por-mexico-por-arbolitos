@@ -6,11 +6,11 @@ import logo from "./fundacionmx.png";
 
 export const CustomLogin = () => {
   const login = useLogin();
-  //Guarda la información
+  //configuracion inicial de los estados de usuario y contraseña
   const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
   
-  const handleLogin = () => { //Inicia sesión
+  const handleLogin = () => { //al hacer click en el botón de iniciar sesión, llama al método login de react-admin
     login({ username, password });
   };
 
@@ -31,7 +31,7 @@ export const CustomLogin = () => {
       type="text"
       placeholder="Usuario"
       value={username}
-      onChange={(e) => setUsername(e.target.value)}
+      onChange={(e) => setUsername(e.target.value)} //Cambia el estado de usuario por el valor ingresado
 
       className="custom-input"
     />
@@ -39,7 +39,7 @@ export const CustomLogin = () => {
       type="password"
       placeholder="Contraseña"
       value={password}
-      onChange={(e) => setPassword(e.target.value)}
+      onChange={(e) => setPassword(e.target.value)}//Cambia el estado de contraseña por el valor ingresado
       onKeyDown={handleKeyPress}
 
       className="custom-input"
