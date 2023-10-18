@@ -37,7 +37,7 @@ export const UserShow = () => ( //Muestra los datos de un usuario al hacer clic 
     const redirect = useRedirect();
     const onSuccess = () => {
         notify("Usuario ha sido creado");
-        redirect("/us");
+        redirect("/usauarios");
         refresh();
     };
 
