@@ -19,7 +19,7 @@ const NuevoComentario = (props) => { // Función para crear un comentario nuevo
   
       const handleSendData = async() => {
           // Convert the form data to JSON
-          const request = await new Request(`https://${host}:1337/comentarios/${Number(props.id_tik)}`, {
+          const request = await new Request(`https://${host}:1337/comentarios/${Number(props.id_tik)}`, {//el id del tiktok se pasa como parametro, pero es tomado desde tickets.js
             method: 'POST',
               body: JSON.stringify(datos),
               headers: new Headers({ 'Content-Type': 'application/json' , "Authentication": localStorage.getItem("auth") }),

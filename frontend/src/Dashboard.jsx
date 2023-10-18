@@ -27,13 +27,14 @@ function CustomTabPanel(props) { //Pestañas del tablero
   );
 }
   
-CustomTabPanel.propTypes = { //Propiedades de las pestañas
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
+//Se define el tipo de dato de las pestañas
+CustomTabPanel.propTypes = { 
+  children: PropTypes.node, //requerie un nodo de react
+  index: PropTypes.number.isRequired,//requiere un número
   value: PropTypes.number.isRequired,
 };
 
-function a11yProps(index) { 
+function a11yProps(index) {  //Propiedades de accesibilidad de las pestañas
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
@@ -68,7 +69,7 @@ export const Dashboard = () => {
           </Tabs>
         </Box>
   
-        {filteredTabs.map((tab, index) => (
+        {filteredTabs.map((tab, index) => ( //renderiza las pestañas con su contenido de acurdo con el filtro
           value === index && (
             <CustomTabPanel key={index} value={value} index={index}>
               {tab.component}

@@ -6,13 +6,13 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const NumTicket = () => { //Muestra el número de tickets que llevan más de una semana sin resolverse
     const { data } = useGetList('tickets', {
-        filter: { fecha: 'true', status: 'Pendiente' },
+        filter: { fecha: 'true', status: 'Pendiente' },//llama al query para filtrar los tickets que llevan más de una semana sin resolverse
     }, {
         pagination: { page: 1, perPage: 10 },
         sort: { field: 'published_at', order: 'ASC' },
     });
 
-    if (!data)
+    if (!data)//Si no hay datos, muestra que no hay problemas
         return (
             <Grid direction="column" container spacing={3}>
                 <Grid item>
@@ -24,9 +24,9 @@ const NumTicket = () => { //Muestra el número de tickets que llevan más de una
         return (
             <Grid direction="column" container spacing={3}>
                 {data.map(record => {
-                    const createdDate = new Date(record.fechaCreacion);
-                    const currentDate = new Date();
-                    const daysSinceCreation = differenceInDays(currentDate, createdDate);
+                    const createdDate = new Date(record.fechaCreacion); //fecha del ticket
+                    const currentDate = new Date();//fecha actual
+                    const daysSinceCreation = differenceInDays(currentDate, createdDate);//cuanto a pasado desde que se creó el ticket
 
                     return (
                         <Grid item key={record.id}>

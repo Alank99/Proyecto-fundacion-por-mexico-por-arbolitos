@@ -4,19 +4,21 @@ import { useState, useEffect } from 'react';
 import host from './const.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend, RadialLinearScale, LinearScale, BarElement, CategoryScale);
+//importacion de las envolturas de las graficas para react
 
 const centeredChartStyle = {
   width: '40%',
   margin: 'auto',
 };
 
+//Grafica de tickets resueltos y pendientes
 const ChartComponent = () => {
-  const [chartData, setChartData] = useState({ Resueltos: 0, Pendientes: 0 });
+  const [chartData, setChartData] = useState({ Resueltos: 0, Pendientes: 0 });//estado de la grafica
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://${host}:1337/ticketsRvsno`, {
+        const response = await fetch(`https://${host}:1337/ticketsRvsno`, { //se hace la peticion a la api sin uso de react-admin
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -24,13 +26,13 @@ const ChartComponent = () => {
           },
         });
 
-        if (response.ok) {
+        if (response.ok) { //tratamiento de los datos
           const rawData = await response.json();
           const transformedData = {
             Resueltos: rawData["0"] || 0,
             Pendientes: rawData["1"] || 0
           };
-          setChartData(transformedData);
+          setChartData(transformedData); //setea los datos en el estado de la grafica
         } else {
           console.error('Error al obtener datos del servidor:', response.statusText);
         }
@@ -42,7 +44,7 @@ const ChartComponent = () => {
     fetchData();
   }, []);
 
-  const { Resueltos, Pendientes } = chartData;
+  const { Resueltos, Pendientes } = chartData; // se extraen los datos del estado con destructuracion
 
   const data = {
     labels: ['Resuelto', 'Pendiente'],
@@ -63,9 +65,10 @@ const ChartComponent = () => {
     ],
   };
 
+  //regresa la grafica en forma de componente de react que espera los datos de la grafica
   return (
     <div style={centeredChartStyle}>
-      <Doughnut data={data} />
+      <Doughnut data={data} /> 
     </div>
   );
 };
@@ -96,10 +99,10 @@ const TicketsTop5 = () => {
     };
 
     fetchData();
-  }, []); // El array vacío asegura que se ejecute solo una vez después del montaje inicial
+  }, []); 
 
-  const regiones = data.map(item => item._id);
-  const totalTickets = data.map(item => item.totalTickets);
+  const regiones = data.map(item => item._id); //se estra las regiones de los datos 
+  const totalTickets = data.map(item => item.totalTickets);//se extrae el total de tickets de los datos
 
   const chartData = {
     labels: regiones,

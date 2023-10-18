@@ -1,4 +1,7 @@
-import { Datagrid, List, ReferenceManyField, TextField, DateField, ReferenceField, Edit, SimpleForm, TextInput, SearchInput, Create,SelectInput, EditButton, TabbedShowLayout, Show, Tab, useGetRecordId, SimpleShowLayout } from 'react-admin';
+import { Datagrid, List, ReferenceManyField, TextField, DateField,
+       ReferenceField, Edit, SimpleForm,
+       TextInput, SearchInput, Create,SelectInput, 
+       EditButton, TabbedShowLayout, Show, Tab, useGetRecordId, SimpleShowLayout } from 'react-admin';
 import {useState,useEffect} from 'react';
 import { Chip } from '@mui/material';
 
@@ -41,7 +44,7 @@ export const TicketList = () => { //Muestra la lista de tickets
 };
 
 export const TicketShow = props => { //Muestra los datos de un ticket al hacer clic en él
-  const recordId = useGetRecordId();
+  const recordId = useGetRecordId();//almacenara el id del ticket
 
   return (
     <Show {...props}>
@@ -102,7 +105,8 @@ export const TicketShow = props => { //Muestra los datos de un ticket al hacer c
                 <EditButton />
               </Datagrid>
             </ReferenceManyField>
-            <NuevoComentario id_tik={recordId}/>
+            {/*En esta parte se envia el id del ticket como parametro*/}
+            <NuevoComentario id_tik={recordId}/> 
           </Tab>
         </TabbedShowLayout>
     </Show>
@@ -194,12 +198,12 @@ export const TicketCreate = () => {//Crea un ticket nuevo
           <input
             type="checkbox"
             checked={hasFolio}
-            onChange={(e) => setHasFolio(e.target.checked)}
+            onChange={(e) => setHasFolio(e.target.checked)} //depediendo si esta marcado o no configura el valor de hasFolio
           />
         </div>
 
         {hasFolio && (
-          <TextInput source="Numerodefolio"  />
+          <TextInput source="Numerodefolio"  />//verifica que si el checkbox esta marcado despliega el folio
         )}
         <TextInput multiline rows={5} fullWidth source="descripcion" />
         <TextInput source="aula" />

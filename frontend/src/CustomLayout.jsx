@@ -46,8 +46,8 @@ export const ThemeToggler = () => { //Cambia el tema
   );
 };
 
-// Es importante pasar la ref para permitir que Material UI gestione la navegación por teclado
-const MyLogoutButton = forwardRef((props, ref) => { //Cierra la sesión
+//Es el boton de salir de la aplicación, utilizando el hook useLogout para quitarse el token de la sesión
+const MyLogoutButton = forwardRef((props, ref) => { 
   const logout = useLogout();
   const handleClick = () => logout();
 
@@ -56,7 +56,6 @@ const MyLogoutButton = forwardRef((props, ref) => { //Cierra la sesión
       style={{backgroundColor: "#800000", color: "white" }}
       onClick={handleClick}
       ref={ref} 
-      // It's important to pass the props to allow Material UI to manage the keyboard navigation
       {...props}
     > 
       <ExitIcon /> Salir de la aplicación 
@@ -65,7 +64,7 @@ const MyLogoutButton = forwardRef((props, ref) => { //Cierra la sesión
 });
 
 const MyUserMenu = () => { //Muestra el menú del usuario
-    const { identity } = useGetIdentity(); 
+    const { identity } = useGetIdentity(); //Obtiene la identidad del usuario
 
     return ( //Muestra la información del usuario
   <UserMenu>
@@ -90,4 +89,4 @@ const MyAppBar = () => ( //Muestra la barra de la aplicación
   </AppBar>
 );
 
-export const MyLayout = (props) => <Layout {...props} appBar={MyAppBar} />;
+export const MyLayout = (props) => <Layout {...props} appBar={MyAppBar} />; //exporta el layout de la aplicación
