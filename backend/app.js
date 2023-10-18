@@ -115,10 +115,17 @@ app.get("/usuarios", async (request, response) => {
             data = data.slice(start, end);
             response.json(data);
         } else if ("id" in request.query) {
-            let data = [];
-            for (let index = 0; index < request.query.id.length; index++) {
-                let dataObtain = await db.collection("Usuarios").find({ id: Number(request.query.id[index]) }).project({ _id: 0 }).toArray();
-                data = await data.concat(dataObtain);
+            let data;
+            if (Array.isArray(request.query.id))
+            {
+                data = [];
+                for (let index = 0; index < request.query.id.length; index++) {
+                    let dataObtain = await db.collection("Usuarios").find({ id: Number(request.query.id[index]) }).project({ _id: 0 }).toArray();
+                    data = await data.concat(dataObtain);
+                }
+            }
+            else {
+                data = await db.collection("Usuarios").find({ id: Number(request.query.id) }).project({ _id: 0, id:1, fullName:1, usuario:1 }).toArray();
             }
             response.json(data);
         } else {
@@ -142,7 +149,6 @@ app.get("/usuarios/:id", async (request, response)=>{
             return;
         }
         let verifiedToken = await jwt.verify(token, "secretKey");
-        let authData=await db.collection("Usuarios").findOne({"id": verifiedToken.id})
         let parametersFind={"id": Number(request.params.id)}
 
         let data=await db.collection('Usuarios').find(parametersFind).project({_id:0}).toArray();
