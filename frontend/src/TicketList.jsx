@@ -114,11 +114,8 @@ export const TicketShow = props => { //Muestra los datos de un ticket al hacer c
 };
 
 export const TicketEdit = (props) => {//Edita el estado de un ticket
-  const {record} = useEditController(props);
+  const {record} = useEditController(props);//es un tipo fecht que obtiene los datos del ticket antes para editar la vista
   const isResolved = record.status === "Resuelto"; //verifica si el ticket esta resuelto
-  if (!record) {
-    return null; // No renderizar nada si el record es undefined o null
-  }
 
   return(
     <Edit {...props}>
