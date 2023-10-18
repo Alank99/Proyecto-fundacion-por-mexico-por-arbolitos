@@ -1,7 +1,6 @@
 const request = require("supertest");
 const {app, client, connectDB} = require("../app");
 const server = require("../server");
-const { response } = require("express");
 
 describe("Pruebas del backend", () => {
     let token;

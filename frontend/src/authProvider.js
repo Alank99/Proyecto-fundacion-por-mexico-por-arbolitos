@@ -1,4 +1,4 @@
-import host from './const.js'
+import host from './const.js';
 
 const authProvider = {
     buttonColor: '#426FA6',

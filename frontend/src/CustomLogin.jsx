@@ -1,17 +1,22 @@
 // CustomLogin.js
 import React, { useState } from "react";
-import { useLogin } from "react-admin";
+import { useLogin, useNotify, useRefresh } from "react-admin";
 import "./custom-login.css";
 import logo from "./fundacionmx.png";
 
 export const CustomLogin = () => {
   const login = useLogin();
+  const notify = useNotify();
+  const refresh = useRefresh();
   //configuracion inicial de los estados de usuario y contraseña
   const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
   
   const handleLogin = () => { //al hacer click en el botón de iniciar sesión, llama al método login de react-admin
-    login({ username, password });
+    login({ username, password }).catch(() => {
+          notify("Usuario o contraseña incorrectos")
+          refresh()
+    });
   };
 
   const handleKeyPress = (e) => 
