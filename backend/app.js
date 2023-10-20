@@ -344,8 +344,8 @@ app.get("/ticketsRvsno", async (request, response)=>{
             const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "region": authData.region,  "fechaCreacion": { "$gte": LastWeek }}).toArray();
             response.json([ticketsr.length, ticketsn.length]);
         }else if(authData.nivel=="local"){
-            const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "id": authData.id, "fechaCreacion": { "$gte": LastWeek }}).toArray();
-            const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "id": authData.id, "fechaCreacion": { "$gte": LastWeek }}).toArray();
+            const ticketsr = await db.collection("Tickets").find({"status": "Resuelto", "id_cor": authData.id, "fechaCreacion": { "$gte": LastWeek }}).toArray();
+            const ticketsn = await db.collection("Tickets").find({"status": "Pendiente", "id_cor": authData.id, "fechaCreacion": { "$gte": LastWeek }}).toArray();
             response.json([ticketsr.length, ticketsn.length]);
         }
         else 
