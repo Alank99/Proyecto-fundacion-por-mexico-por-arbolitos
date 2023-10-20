@@ -217,7 +217,7 @@ export const TicketCreate = () => {//Crea un ticket nuevo
         {hasFolio && (
           <TextInput source="Numerodefolio" label = "Numero de folio" />//verifica que si el checkbox esta marcado despliega el folio
         )}
-        <TextInput multiline rows={5} fullWidth source = "Descripcion" />
+        <TextInput multiline rows={5} fullWidth source = "descripcion" />
         <TextInput source="aula" label = "Aula"/>
       </SimpleForm>
     </Create>

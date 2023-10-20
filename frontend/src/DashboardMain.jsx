@@ -5,19 +5,21 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const NumTicket = () => { //Muestra el número de tickets que llevan más de una semana sin resolverse
-    const { data } = useGetList('tickets', {
+    const { data, total } = useGetList('tickets', {
         filter: { fecha: 'true', status: 'Pendiente' },//llama al query para filtrar los tickets que llevan más de una semana sin resolverse
     }, {
         pagination: { page: 1, perPage: 10 },
         sort: { field: 'published_at', order: 'ASC' },
     });
 
-    if (!data)//Si no hay datos, muestra que no hay problemas
+    if (!total)//Si no hay datos, muestra que no hay problemas
         return (
-            <Grid direction="column" container spacing={3}>
-                <Grid item>
-                    <h2>No hay problemas</h2>
-                </Grid>
+            <Grid item>
+                <Paper sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography component="h1" variant='h7'>
+                        ¡Felicidades, no tienes Tickets atrasados!
+                    </Typography>
+                </Paper>
             </Grid>
         )
     else { //Formato de los tickets que llevan más de una semana sin resolverse
