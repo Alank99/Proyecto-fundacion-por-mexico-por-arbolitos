@@ -1,6 +1,6 @@
 # Manual de Instalación
 
-### Instalacion del proyecto:
+### Instalación del proyecto:
 Mediante la liga https://github.com/Alank99/hackerlocos/tree/main acceder al repositorio.
 
 ![Repositorio del proyecto](./Entregables/Imagenes/Captura%20de%20pantalla%202023-10-13%20135150.png)
@@ -13,9 +13,9 @@ Se desplegaran diferentes opciones. Seleccione la opcion "download ZIP"
 
 ![Download ZIP](./Entregables/Imagenes/imagen3.png) 
 
-Una vez descargado se debe de descomprimir el zip dando clic derecho en el y seleccionando la opción "Extraer todo...". 
+Una vez descargado se debe de descomprimir el zip dando clic derecho en él y seleccionando la opción "Extraer todo...".
 
-Una vez descomprimido continuar con la creacion del servidor de MongoDB
+ Una vez descomprimido continuar con la creación del servidor de MongoDB
 
 ### Creación del servidor de MongoDB
     Iniciar una conexión a mongodb://localhost:27017/
@@ -66,8 +66,7 @@ http://localhost:3000/#/login
 
 ### Uso de certificados para https
 
-Para el funcionamiento del protocolo https de nuestro proyecto se necesita verificar los certificados incluidos en este 
-repositorio, para ello necesitamos aprobarlos para el uso dentro de nuestro navegador web.
+Para el funcionamiento del protocolo https de nuestro proyecto se necesita verificar los certificados incluidos en este repositorio, para ello necesitamos aprobarlos para el uso dentro de nuestro navegador web.
 
 1. Ir a Ajustes del navegador
 
@@ -91,8 +90,8 @@ repositorio, para ello necesitamos aprobarlos para el uso dentro de nuestro nave
 
 ![Confiar en esta CA para identificar sitios web](./Entregables/Imagenes/cert5.png)
 
-7. Ir a la direccion del backend https://localhost:1337/login y aceptar y continuar
+7. Ir a la dirección del backend https://localhost:1337/login, aceptar y continuar
 
 ![Habilitar backend](./Entregables/Imagenes/cert6.png)
 
-8. Puedes utilizar la pagina web
+8. La aplicación está lista.
